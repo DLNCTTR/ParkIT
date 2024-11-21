@@ -1,16 +1,24 @@
-// frontend/src/components/Navbar.js
+// src/components/Navbar.js
 import React from "react";
 import { Link } from "react-router-dom";
-import "./Navbar.css"; // Import styles for the Navbar
+import "./Navbar.css";
 
 const Navbar = () => {
     return (
         <nav className="navbar">
-            <ul>
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/login">Login</Link></li>
-                <li><Link to="/manage">Manage Parking</Link></li>
-                <li><Link to="/map">Map</Link></li>
+            <ul className="navbar-list">
+                <li className="navbar-item">
+                    <Link to="/" className="navbar-link">Home</Link>
+                </li>
+                <li className="navbar-item">
+                    <Link to="/login" className="navbar-link">Login</Link>
+                </li>
+                <li className="navbar-item">
+                    <Link to="/manage" className="navbar-link">Manage Parking</Link>
+                </li>
+                <li className="navbar-item">
+                    <Link to="/map" className="navbar-link">Map</Link>
+                </li>
             </ul>
         </nav>
     );
