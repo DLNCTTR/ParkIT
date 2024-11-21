@@ -7,39 +7,36 @@ namespace ParkIT.Models
         // Primary Key
         public int Id { get; set; }
 
-        // Location is required
+        // Location is required and limited to 100 characters
         [Required(ErrorMessage = "Location is required.")]
         [StringLength(100, ErrorMessage = "Location cannot exceed 100 characters.")]
         public string Location { get; set; }
 
-        // Price per hour with currency format
+        // Price per hour (must be a decimal between 0 and 1000)
         [Required(ErrorMessage = "Price per hour is required.")]
         [Range(0, 1000, ErrorMessage = "Price per hour must be between 0 and 1000.")]
-        [DataType(DataType.Currency)]
-        [Display(Name = "Price per Hour (€)")]
         public decimal PricePerHour { get; set; }
 
-        // Type of parking spot (e.g., regular, handicap, etc.)
+        // Parking spot type (e.g., regular, handicap) limited to 50 characters
         [Required(ErrorMessage = "Type is required.")]
         [StringLength(50, ErrorMessage = "Type cannot exceed 50 characters.")]
         public string Type { get; set; }
 
-        // Capacity for vehicles (must be positive)
+        // Capacity (must be an integer greater than 0)
         [Required(ErrorMessage = "Capacity is required.")]
         [Range(1, int.MaxValue, ErrorMessage = "Capacity must be at least 1.")]
         public int Capacity { get; set; }
 
-        // Availability status of the parking spot
-        [Required]
+        // Boolean indicating availability of the parking spot
+        [Required(ErrorMessage = "Availability status is required.")]
         public bool Availability { get; set; }
 
-        // Optional owner of the parking spot
+        // Optional owner field (limited to 50 characters)
         [StringLength(50, ErrorMessage = "Owner name cannot exceed 50 characters.")]
         public string Owner { get; set; }
 
-        // Description of the parking spot (optional, allows longer text)
+        // Optional description (limited to 500 characters)
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
-        [DataType(DataType.MultilineText)]
         public string Description { get; set; }
     }
 }

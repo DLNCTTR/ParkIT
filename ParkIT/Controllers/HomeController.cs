@@ -1,37 +1,55 @@
-﻿using Microsoft.AspNetCore.Mvc; // Required for MVC controllers
-using Microsoft.Extensions.Logging; // Required for ILogger
-using System.Diagnostics; // Required for Activity
-using ParkIT.Models; // Required for ErrorViewModel
+﻿using Microsoft.AspNetCore.Mvc; // Required for API controllers
+using ParkIT.Data; // Required for database context
+using ParkIT.Models; // Required for model classes
+using System.Linq; // Required for LINQ queries
 
 namespace ParkIT.Controllers
 {
-    public class HomeController : Controller
+    // This controller manages parking-related API endpoints
+    [ApiController] // Marks this as an API controller (no Razor views)
+    [Route("api/[controller]")] // Sets the base route for this controller
+    public class HomePageController : ControllerBase
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly AppDbContext _dbContext; // Database context for accessing data
 
-        // Constructor for dependency injection
-        public HomeController(ILogger<HomeController> logger)
+        // Constructor for dependency injection of the database context
+        public HomePageController(AppDbContext dbContext)
         {
-            _logger = logger;
+            _dbContext = dbContext;
         }
 
-        // The Index action that returns the Index view
-        public IActionResult Index()
+        [HttpGet("parking-spaces")] // API endpoint: /api/parking/parking-spaces
+        public IActionResult GetParkingSpaces()
         {
-            return View();
+            var spaces = _dbContext.ParkingSpots.ToList(); // Fetch all parking spots from the database
+            return Ok(spaces); // Return the list of parking spots as JSON
         }
 
-        // The Privacy action that returns the Privacy view
-        public IActionResult Privacy()
+        [HttpGet("parking-space/{id}")] // API endpoint: /api/parking/parking-space/{id}
+        public IActionResult GetParkingSpace(int id)
         {
-            return View();
+            var space = _dbContext.ParkingSpots.FirstOrDefault(p => p.Id == id); // Find parking space by ID
+
+            if (space == null)
+            {
+                return NotFound(); // Return 404 if the parking space is not found
+            }
+
+            return Ok(space); // Return the parking space details as JSON
         }
 
-        // The Error action to handle errors, passing in an ErrorViewModel
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpPost("parking-space")] // API endpoint: /api/parking/parking-space
+        public IActionResult AddParkingSpace([FromBody] ParkingSpot parkingSpace)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // Return 400 if the model is invalid
+            }
+
+            _dbContext.ParkingSpots.Add(parkingSpace); // Add the new parking space to the database
+            _dbContext.SaveChanges(); // Save changes to the database
+
+            return CreatedAtAction(nameof(GetParkingSpace), new { id = parkingSpace.Id }, parkingSpace); // Return 201 with the created resource
         }
     }
 }
