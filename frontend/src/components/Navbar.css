@@ -1,23 +1,29 @@
-/* frontend/src/components/Navbar.css */
+/* src/components/Navbar.css */
 .navbar {
-    background-color: #f8f9fa;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+    background-color: #333;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
 }
 
-.navbar ul {
+.navbar-list {
     list-style: none;
     display: flex;
-    gap: 15px;
-    padding: 0;
     margin: 0;
+    padding: 0;
 }
 
-.navbar a {
+.navbar-item {
+    margin: 0 15px;
+}
+
+.navbar-link {
     text-decoration: none;
-    color: #007bff;
+    color: white;
+    font-size: 16px;
+    transition: color 0.3s ease;
 }
 
-.navbar a:hover {
-    text-decoration: underline;
+.navbar-link:hover {
+    color: #1e90ff;
 }
