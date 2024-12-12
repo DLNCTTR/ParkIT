@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 // HomePage component to display available parking spaces
 const HomePage = () => {
     const [parkingSpaces, setParkingSpaces] = useState([]); // State for parking spaces
+    const [filteredSpaces, setFilteredSpaces] = useState([]); // State for filtered spaces
+    const [searchQuery, setSearchQuery] = useState(""); // State for the search input
     const [loading, setLoading] = useState(true); // State for loading indicator
     const [error, setError] = useState(null); // State for error handling
 
@@ -14,6 +16,7 @@ const HomePage = () => {
             try {
                 const response = await axios.get("https://localhost:7155/api/parking");
                 setParkingSpaces(response.data); // Set the fetched data to state
+                setFilteredSpaces(response.data); // Initially, all spaces are displayed
             } catch (error) {
                 console.error("Error fetching parking spaces:", error);
                 setError("Failed to fetch parking spaces. Please try again later.");
@@ -24,6 +27,14 @@ const HomePage = () => {
 
         fetchParkingSpaces();
     }, []);
+
+    // Update filtered spaces when the search query changes
+    useEffect(() => {
+        const filtered = parkingSpaces.filter((space) =>
+            space.location.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setFilteredSpaces(filtered);
+    }, [searchQuery, parkingSpaces]);
 
     // Render loading state
     if (loading) {
@@ -38,9 +49,26 @@ const HomePage = () => {
     return (
         <div style={{ padding: "20px" }}>
             <h1>Available Parking Spaces</h1>
-            {parkingSpaces.length > 0 ? (
+
+            {/* Search Bar */}
+            <div style={{ marginBottom: "20px" }}>
+                <input
+                    type="text"
+                    placeholder="Search by location..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                        padding: "10px",
+                        width: "100%",
+                        border: "1px solid #ddd",
+                        borderRadius: "5px",
+                    }}
+                />
+            </div>
+
+            {filteredSpaces.length > 0 ? (
                 <ul style={{ listStyleType: "none", padding: 0 }}>
-                    {parkingSpaces.map((space) => (
+                    {filteredSpaces.map((space) => (
                         <li
                             key={space.id}
                             style={{
@@ -51,10 +79,12 @@ const HomePage = () => {
                             }}
                         >
                             <h2>{space.location}</h2>
-                            <p><strong>Description:</strong> {space.description}</p>
-                            <p><strong>Price per Hour:</strong> €{space.pricePerHour}</p>
-                            <p><strong>Type:</strong> {space.type}</p>
-                            <p><strong>Capacity:</strong> {space.capacity}</p>
+                            <p>
+                                <strong>Price per Hour:</strong> €{space.pricePerHour}
+                            </p>
+                            <p>
+                                <strong>Capacity:</strong> {space.capacity}
+                            </p>
                             <p>
                                 <strong>Availability:</strong>{" "}
                                 {space.availability ? "Available" : "Not Available"}
@@ -75,7 +105,7 @@ const HomePage = () => {
                     ))}
                 </ul>
             ) : (
-                <p>No parking spaces available at the moment.</p>
+                <p>No parking spaces match your search.</p>
             )}
         </div>
     );
