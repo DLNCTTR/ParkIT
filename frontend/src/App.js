@@ -7,7 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import ManageParkingPage from "./pages/ManageParkingPage";
 import MapPage from "./pages/MapPage";
 import NotFoundPage from "./pages/NotFoundPage";
-
+import ParkingDetailsPage from "./pages/ParkingDetailsPage";
 const App = () => {
     return (
         <Router>
@@ -18,6 +18,7 @@ const App = () => {
                 <Route path="/manage" element={<ManageParkingPage />} />
                 <Route path="/map" element={<MapPage />} />
                 <Route path="*" element={<NotFoundPage />} />
+                <Route path="/parking/:id" element={<ParkingDetailsPage />} />
             </Routes>
         </Router>
     );
