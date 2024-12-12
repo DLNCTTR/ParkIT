@@ -8,35 +8,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="63e38c80-7d9c-4fc3-97de-c4eb94dbc6d2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/projectSettingsUpdater.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.vs/ParkIT/v16/.suo" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/Migrations/20241121152335_UpdateParkingSpotModel.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/Migrations/20241121152335_UpdateParkingSpotModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/Migrations/20241121161753_UpdateParkingSpotIdGeneration.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/Migrations/20241121161753_UpdateParkingSpotIdGeneration.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/asset-manifest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/logo192.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/logo512.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/manifest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/robots.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/static/css/main.e6c13ad2.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/static/css/main.e6c13ad2.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/static/js/453.8ab44547.chunk.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/static/js/453.8ab44547.chunk.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/static/js/main.f78d5696.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/static/js/main.f78d5696.js.LICENSE.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ParkIT/wwwroot/static/js/main.f78d5696.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/public/images/Map.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/GoogleMapComponent.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/GoogleMapComponent.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/HomePage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/HomePage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/MapPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/MapPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/NotFoundPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/NotFoundPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/ParkingDetailsPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/ParkingDetailsPage.js" afterDir="false" />
-    </list>
+    <list default="true" id="63e38c80-7d9c-4fc3-97de-c4eb94dbc6d2" name="Changes" comment="API" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -143,7 +115,7 @@
       <workItem from="1732303625274" duration="2265000" />
       <workItem from="1732615030447" duration="513000" />
       <workItem from="1733441031086" duration="6000" />
-      <workItem from="1734005455350" duration="1106000" />
+      <workItem from="1734005455350" duration="1571000" />
     </task>
     <task id="LOCAL-00001" summary="iteration 2">
       <option name="closed" value="true" />
@@ -169,7 +141,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732220135699</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="API">
+      <option name="closed" value="true" />
+      <created>1734006860859</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1734006860859</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -193,6 +173,7 @@
     <MESSAGE value="iteration 2" />
     <MESSAGE value="add, edit, delete" />
     <MESSAGE value="API start" />
-    <option name="LAST_COMMIT_MESSAGE" value="API start" />
+    <MESSAGE value="API" />
+    <option name="LAST_COMMIT_MESSAGE" value="API" />
   </component>
 </project>
