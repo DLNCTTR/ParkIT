@@ -1,13 +1,11 @@
-// src/pages/NotFoundPage.jsx
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
 
 const NotFoundPage = () => {
     return (
-        <div style={{ textAlign: "center", marginTop: "50px" }}>
+        <div>
             <h1>404 - Page Not Found</h1>
-            <p>The page you're looking for doesn't exist.</p>
-            <Link to="/">Go back to the homepage</Link>
+            <p>Sorry, the page you are looking for does not exist.</p>
+            <a href="/">Return Home</a>
         </div>
     );
 };
