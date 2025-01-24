@@ -1,75 +1,51 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const ParkingDetailsPage = () => {
-    const { id } = useParams(); // Get the parking space ID from the URL
-    const [parkingSpace, setParkingSpace] = useState(null); // State to hold parking space details
-    const [loading, setLoading] = useState(true); // State to handle loading
-    const [error, setError] = useState(null); // State to handle errors
+    const { id } = useParams();
+    const [parkingSpot, setParkingSpot] = useState(null);
 
     useEffect(() => {
-        // Fetch parking space details from the API
-        const fetchParkingSpaceDetails = async () => {
+        const fetchParkingSpot = async () => {
             try {
-                const response = await axios.get(`https://localhost:7155/api/parking/${id}`);
-                setParkingSpace(response.data);
-            } catch (err) {
-                console.error("Error fetching parking space details:", err);
-                setError("Failed to load parking space details. Please try again later.");
-            } finally {
-                setLoading(false);
+                const response = await fetch(`/api/parking/${id}`);
+                const data = await response.json();
+                setParkingSpot(data);
+            } catch (error) {
+                console.error("Error fetching parking spot details:", error);
             }
         };
 
-        fetchParkingSpaceDetails();
+        fetchParkingSpot();
     }, [id]);
 
-    if (loading) {
-        return <div>Loading parking space details...</div>;
-    }
+    useEffect(() => {
+        if (parkingSpot && window.google) {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: { lat: parkingSpot.latitude, lng: parkingSpot.longitude },
+            });
 
-    if (error) {
-        return <div style={{ color: "red" }}>{error}</div>;
+            new google.maps.Marker({
+                position: { lat: parkingSpot.latitude, lng: parkingSpot.longitude },
+                map,
+                title: parkingSpot.location,
+            });
+        }
+    }, [parkingSpot]);
+
+    if (!parkingSpot) {
+        return <div>Loading...</div>;
     }
 
     return (
-        <div style={{ padding: "20px" }}>
-            {/* Display the placeholder image */}
-            <img
-                src="/images/Map.jpg"
-                alt="Parking Spot Placeholder"
-                style={{
-                    width: "100%",
-                    height: "auto",
-                    marginBottom: "20px",
-                    borderRadius: "8px",
-                }}
-            />
-
-            {/* Display parking space details */}
-            <h1>{parkingSpace.location}</h1>
-            <p><strong>Description:</strong> {parkingSpace.description}</p>
-            <p><strong>Price per Hour:</strong> €{parkingSpace.pricePerHour}</p>
-            <p><strong>Type:</strong> {parkingSpace.type}</p>
-            <p><strong>Capacity:</strong> {parkingSpace.capacity}</p>
-            <p><strong>Availability:</strong> {parkingSpace.availability ? "Available" : "Not Available"}</p>
-
-            {/* Back to home button */}
-            <Link
-                to="/"
-                style={{
-                    display: "inline-block",
-                    marginTop: "20px",
-                    padding: "10px 15px",
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    textDecoration: "none",
-                    borderRadius: "5px",
-                }}
-            >
-                Back to Home
-            </Link>
+        <div>
+            <h1>{parkingSpot.location}</h1>
+            <p>Price per Hour: ${parkingSpot.pricePerHour}</p>
+            <p>Type: {parkingSpot.type}</p>
+            <p>Capacity: {parkingSpot.capacity}</p>
+            <p>Available: {parkingSpot.available ? "Yes" : "No"}</p>
+            <div id="map" style={{ width: "100%", height: "500px" }}></div>
         </div>
     );
 };
