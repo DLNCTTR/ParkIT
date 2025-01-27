@@ -8,22 +8,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="APILOGIN">
-      <change afterPath="$PROJECT_DIR$/ParkIT/DTOs/UserRegisterDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/AuthController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/ParkingController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/ParkingController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/DTO's/ParkingSpotDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/DTOs/ParkingSpotDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Data/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Data/AppDbContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Models/ParkingSpot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Models/ParkingSpot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.env" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Navbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Navbar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LoginPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/LoginPage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/MapPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/MapPage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/ParkingDetailsPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/ParkingDetailsPage.js" afterDir="false" />
-    </list>
+    <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="APILOGIN" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -80,7 +65,7 @@
       <workItem from="1737746585383" duration="6437000" />
       <workItem from="1737757808770" duration="343000" />
       <workItem from="1737962392949" duration="10618000" />
-      <workItem from="1737997905122" duration="1122000" />
+      <workItem from="1737997905122" duration="1533000" />
     </task>
     <task id="LOCAL-00001" summary="APILOGIN">
       <option name="closed" value="true" />
@@ -90,7 +75,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737757828037</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="APILOGIN">
+      <option name="closed" value="true" />
+      <created>1737999441794</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1737999441794</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
