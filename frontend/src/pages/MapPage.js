@@ -1,4 +1,7 @@
+/* global google */
+
 import React, { useEffect, useState } from "react";
+
 
 const MapPage = () => {
     const [parkingSpaces, setParkingSpaces] = useState([]);

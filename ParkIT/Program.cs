@@ -33,10 +33,11 @@ builder.Services.AddSwaggerGen(c =>
 // Add CORS policy to allow requests from the React frontend
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp", builder =>
-        builder.WithOrigins("http://localhost:3000") // Allow requests only from the React app
-               .AllowAnyMethod()                    // Allow all HTTP methods (GET, POST, PUT, DELETE)
-               .AllowAnyHeader());                  // Allow all headers
+    options.AddPolicy("AllowReactApp", corsBuilder =>
+        corsBuilder.WithOrigins("http://localhost:3000") // Allow requests only from the React app
+                   .AllowAnyMethod()                    // Allow all HTTP methods (GET, POST, PUT, DELETE)
+                   .AllowAnyHeader()                    // Allow all headers
+                   .AllowCredentials());                // Allow cookies for authentication (if required)
 });
 
 // ==========================
@@ -48,7 +49,7 @@ var app = builder.Build();
 // Configure Middleware Pipeline
 // ==========================
 
-// Development environment middleware
+// Environment-specific middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage(); // Show detailed error pages
@@ -56,6 +57,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "ParkIT API v1");
+        c.RoutePrefix = "swagger";  // Swagger UI will be accessible at /swagger
     });
 }
 else

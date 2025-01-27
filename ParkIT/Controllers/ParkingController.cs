@@ -34,9 +34,9 @@ namespace ParkIT.Controllers
                         PricePerHour = p.PricePerHour,
                         Type = p.Type,
                         Capacity = p.Capacity,
-                        Available = p.Available,
-                        Latitude = p.Latitude,
-                        Longitude = p.Longitude
+                        Availability = p.Availability,
+                        Latitude = ParseLatitude(p.GeoLocation),
+                        Longitude = ParseLongitude(p.GeoLocation)
                     })
                     .ToListAsync();
 
@@ -57,27 +57,49 @@ namespace ParkIT.Controllers
                 return BadRequest("Invalid parking spot ID.");
             }
 
-            var spot = await _context.ParkingSpots
-                .Where(p => p.Id == id)
-                .Select(p => new ParkingSpotDto
-                {
-                    Id = p.Id,
-                    Location = p.Location,
-                    PricePerHour = p.PricePerHour,
-                    Type = p.Type,
-                    Capacity = p.Capacity,
-                    Available = p.Available,
-                    Latitude = p.Latitude,
-                    Longitude = p.Longitude
-                })
-                .FirstOrDefaultAsync();
-
-            if (spot == null)
+            try
             {
-                return NotFound("Parking spot not found.");
-            }
+                var spot = await _context.ParkingSpots
+                    .Where(p => p.Id == id)
+                    .Select(p => new ParkingSpotDto
+                    {
+                        Id = p.Id,
+                        Location = p.Location,
+                        PricePerHour = p.PricePerHour,
+                        Type = p.Type,
+                        Capacity = p.Capacity,
+                        Availability = p.Availability,
+                        Latitude = ParseLatitude(p.GeoLocation),
+                        Longitude = ParseLongitude(p.GeoLocation)
+                    })
+                    .FirstOrDefaultAsync();
 
-            return Ok(spot);
+                if (spot == null)
+                {
+                    return NotFound("Parking spot not found.");
+                }
+
+                return Ok(spot);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // Helper methods to safely parse GeoLocation
+        private static double ParseLatitude(string geoLocation)
+        {
+            if (string.IsNullOrEmpty(geoLocation) || !geoLocation.Contains(","))
+                return 0.0; // Default latitude if invalid
+            return double.TryParse(geoLocation.Split(',')[0], out var latitude) ? latitude : 0.0;
+        }
+
+        private static double ParseLongitude(string geoLocation)
+        {
+            if (string.IsNullOrEmpty(geoLocation) || !geoLocation.Contains(","))
+                return 0.0; // Default longitude if invalid
+            return double.TryParse(geoLocation.Split(',')[1], out var longitude) ? longitude : 0.0;
         }
     }
 }

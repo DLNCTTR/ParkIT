@@ -7,7 +7,7 @@ namespace ParkIT.DTOs
         public decimal PricePerHour { get; set; }
         public string Type { get; set; }
         public int Capacity { get; set; }
-        public bool Available { get; set; }
+        public bool Availability { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }

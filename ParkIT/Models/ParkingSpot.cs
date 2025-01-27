@@ -25,15 +25,20 @@ namespace ParkIT.Models
         public int Capacity { get; set; }
 
         [Required(ErrorMessage = "Availability status is required.")]
-        public bool Available { get; set; }
+        public bool Availability { get; set; } // Matches the "Availability" column in your database
 
-        // New fields for geographical coordinates
+        // New Latitude field
         [Required(ErrorMessage = "Latitude is required.")]
         [Range(-90, 90, ErrorMessage = "Latitude must be between -90 and 90 degrees.")]
         public double Latitude { get; set; }
 
+        // New Longitude field
         [Required(ErrorMessage = "Longitude is required.")]
         [Range(-180, 180, ErrorMessage = "Longitude must be between -180 and 180 degrees.")]
         public double Longitude { get; set; }
+
+        // GeoLocation field retained for compatibility
+        [StringLength(100, ErrorMessage = "GeoLocation cannot exceed 100 characters.")]
+        public string GeoLocation { get; set; } // Optional: Stores "latitude,longitude" as a string
     }
 }

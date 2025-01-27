@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 
 const LoginPage = () => {
-    const [isSignIn, setIsSignIn] = useState(true);
+    const [isSignIn, setIsSignIn] = useState(true); // Toggle between sign-in and register
     const [formData, setFormData] = useState({
         name: "",
+        email: "",
         password: "",
     });
     const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false); // Show a loading state
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -15,7 +17,12 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const endpoint = isSignIn ? "/api/auth/login" : "/api/auth/register";
+        setLoading(true); // Set loading to true during API call
+        setMessage(""); // Clear previous messages
+
+        const endpoint = isSignIn
+            ? `${process.env.REACT_APP_API_BASE_URL}/api/auth/login`
+            : `${process.env.REACT_APP_API_BASE_URL}/api/auth/register`;
         const method = "POST";
 
         try {
@@ -28,13 +35,20 @@ const LoginPage = () => {
             });
 
             const data = await response.json();
+            setLoading(false); // Turn off loading after response
 
             if (response.ok) {
-                setMessage(isSignIn ? "Login successful!" : "Account created successfully!");
+                setMessage(isSignIn ? `Welcome, ${data.User.name}!` : "Account created successfully!");
+                if (isSignIn) {
+                    // Store token in localStorage for authentication
+                    localStorage.setItem("token", data.Token);
+                    localStorage.setItem("user", JSON.stringify(data.User));
+                }
             } else {
                 setMessage(data.Message || "An error occurred.");
             }
         } catch (error) {
+            setLoading(false); // Turn off loading on error
             setMessage("An error occurred while communicating with the server.");
         }
     };
@@ -43,11 +57,22 @@ const LoginPage = () => {
         <div style={{ maxWidth: "400px", margin: "0 auto", textAlign: "center" }}>
             <h1>{isSignIn ? "Sign In" : "Create Account"}</h1>
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column" }}>
+                {!isSignIn && (
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="Name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        required
+                        style={{ marginBottom: "10px", padding: "8px" }}
+                    />
+                )}
                 <input
-                    type="text"
-                    name="name"
-                    placeholder="Name"
-                    value={formData.name}
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={formData.email}
                     onChange={handleInputChange}
                     required
                     style={{ marginBottom: "10px", padding: "8px" }}
@@ -61,8 +86,8 @@ const LoginPage = () => {
                     required
                     style={{ marginBottom: "10px", padding: "8px" }}
                 />
-                <button type="submit" style={{ marginBottom: "10px", padding: "10px" }}>
-                    {isSignIn ? "Sign In" : "Create Account"}
+                <button type="submit" style={{ marginBottom: "10px", padding: "10px" }} disabled={loading}>
+                    {loading ? "Processing..." : isSignIn ? "Sign In" : "Create Account"}
                 </button>
             </form>
             <button
@@ -80,4 +105,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-
