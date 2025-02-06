@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using NetTopologySuite.Geometries; // Required for spatial data handling
 
 namespace ParkIT.Models
 {
@@ -27,18 +28,13 @@ namespace ParkIT.Models
         [Required(ErrorMessage = "Availability status is required.")]
         public bool Availability { get; set; } // Matches the "Availability" column in your database
 
-        // New Latitude field
-        [Required(ErrorMessage = "Latitude is required.")]
-        [Range(-90, 90, ErrorMessage = "Latitude must be between -90 and 90 degrees.")]
-        public double Latitude { get; set; }
+        // Latitude field, automatically derived from GeoLocation
+        public double Latitude => GeoLocation?.Y ?? 0; // Y = Latitude
 
-        // New Longitude field
-        [Required(ErrorMessage = "Longitude is required.")]
-        [Range(-180, 180, ErrorMessage = "Longitude must be between -180 and 180 degrees.")]
-        public double Longitude { get; set; }
+        // Longitude field, automatically derived from GeoLocation
+        public double Longitude => GeoLocation?.X ?? 0; // X = Longitude
 
-        // GeoLocation field retained for compatibility
-        [StringLength(100, ErrorMessage = "GeoLocation cannot exceed 100 characters.")]
-        public string GeoLocation { get; set; } // Optional: Stores "latitude,longitude" as a string
+        // Storing geolocation as a spatial point
+        public Point GeoLocation { get; set; }
     }
 }

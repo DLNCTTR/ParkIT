@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ParkIT.Data;
 using ParkIT.DTOs;
+using ParkIT.Models;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +29,11 @@ namespace ParkIT.Controllers
         {
             try
             {
+                if (!_context.ParkingSpots.Any())
+                {
+                    return NotFound("No parking spots available.");
+                }
+
                 var spaces = await _context.ParkingSpots
                     .Select(p => new ParkingSpotDto
                     {
@@ -35,8 +43,8 @@ namespace ParkIT.Controllers
                         Type = p.Type,
                         Capacity = p.Capacity,
                         Availability = p.Availability,
-                        Latitude = ParseLatitude(p.GeoLocation),
-                        Longitude = ParseLongitude(p.GeoLocation)
+                        Latitude = p.GeoLocation != null ? p.GeoLocation.Y : 0,  // Extract from Point
+                        Longitude = p.GeoLocation != null ? p.GeoLocation.X : 0  // Extract from Point
                     })
                     .ToListAsync();
 
@@ -69,8 +77,8 @@ namespace ParkIT.Controllers
                         Type = p.Type,
                         Capacity = p.Capacity,
                         Availability = p.Availability,
-                        Latitude = ParseLatitude(p.GeoLocation),
-                        Longitude = ParseLongitude(p.GeoLocation)
+                        Latitude = p.GeoLocation != null ? p.GeoLocation.Y : 0,  
+                        Longitude = p.GeoLocation != null ? p.GeoLocation.X : 0  
                     })
                     .FirstOrDefaultAsync();
 
@@ -87,19 +95,38 @@ namespace ParkIT.Controllers
             }
         }
 
-        // Helper methods to safely parse GeoLocation
-        private static double ParseLatitude(string geoLocation)
+        // POST: api/parking
+        [HttpPost]
+        public async Task<IActionResult> CreateParkingSpot([FromBody] ParkingSpotDto parkingSpotDto)
         {
-            if (string.IsNullOrEmpty(geoLocation) || !geoLocation.Contains(","))
-                return 0.0; // Default latitude if invalid
-            return double.TryParse(geoLocation.Split(',')[0], out var latitude) ? latitude : 0.0;
-        }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid data provided.");
+            }
 
-        private static double ParseLongitude(string geoLocation)
-        {
-            if (string.IsNullOrEmpty(geoLocation) || !geoLocation.Contains(","))
-                return 0.0; // Default longitude if invalid
-            return double.TryParse(geoLocation.Split(',')[1], out var longitude) ? longitude : 0.0;
+            try
+            {
+                var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+
+                var newSpot = new ParkingSpot
+                {
+                    Location = parkingSpotDto.Location,
+                    PricePerHour = parkingSpotDto.PricePerHour,
+                    Type = parkingSpotDto.Type,
+                    Capacity = parkingSpotDto.Capacity,
+                    Availability = parkingSpotDto.Availability,
+                    GeoLocation = geometryFactory.CreatePoint(new Coordinate(parkingSpotDto.Longitude, parkingSpotDto.Latitude))
+                };
+
+                _context.ParkingSpots.Add(newSpot);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetParkingSpot), new { id = newSpot.Id }, parkingSpotDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

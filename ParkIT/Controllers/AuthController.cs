@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ParkIT.DTOs;
 
-
 namespace ParkIT.Controllers
 {
     [Route("api/[controller]")]
@@ -30,18 +29,15 @@ namespace ParkIT.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto loginDto)
         {
-            // Validate input
             if (!ModelState.IsValid)
                 return BadRequest("Invalid input");
 
-            // Check if user exists
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Username == loginDto.Username);
 
             if (user == null || user.Password != loginDto.Password)
                 return Unauthorized("Invalid username or password");
 
-            // Generate JWT token
             var token = GenerateJwtToken(user);
 
             return Ok(new
@@ -54,33 +50,27 @@ namespace ParkIT.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDto registerDto)
         {
-            // Validate input
             if (!ModelState.IsValid)
                 return BadRequest("Invalid input");
 
-            // Check if username or email already exists
             if (await _context.Users.AnyAsync(u => u.Username == registerDto.Username))
                 return Conflict("Username is already taken");
 
             if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
                 return Conflict("Email is already registered");
 
-            // Create new user entity
             var user = new User
             {
                 Username = registerDto.Username,
                 Email = registerDto.Email,
-                Password = registerDto.Password // Use plain text password for development
+                Password = registerDto.Password // Store password as plain text (not recommended for production)
             };
 
-            // Add user to database
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // Confirm successful registration
             return Ok(new { Message = "User registered successfully" });
         }
-
 
         private string GenerateJwtToken(User user)
         {
