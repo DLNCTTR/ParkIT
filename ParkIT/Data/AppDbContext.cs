@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
-using NetTopologySuite.IO; // ✅ Import WKTReader
+using NetTopologySuite.IO; // ✅ Required for WKTReader
 using ParkIT.Models;
 
 namespace ParkIT.Data
@@ -33,6 +33,15 @@ namespace ParkIT.Data
             modelBuilder.Entity<ParkingSpot>()
                 .Property(p => p.PricePerHour)
                 .HasPrecision(18, 2); // ✅ Ensures proper decimal precision (e.g., 999999999999.99)
+
+            // ✅ Ensure Unique Constraints for User Table
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

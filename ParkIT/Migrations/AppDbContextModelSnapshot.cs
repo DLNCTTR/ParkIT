@@ -44,6 +44,7 @@ namespace ParkIT.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("PricePerHour")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Type")
@@ -65,6 +66,7 @@ namespace ParkIT.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -74,6 +76,7 @@ namespace ParkIT.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Role")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -83,6 +86,12 @@ namespace ParkIT.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
