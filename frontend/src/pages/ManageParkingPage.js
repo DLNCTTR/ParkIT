@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const ManageParkingPage = () => {
-    const [parkingSpaces, setParkingSpaces] = useState([]);
+    const [parkingSpaces, setParkingSpaces] = useState([]); // ✅ Ensure initial state is an array
     const [form, setForm] = useState({
         location: "",
         availability: true,
@@ -24,9 +24,18 @@ const ManageParkingPage = () => {
     const fetchParkingSpaces = async () => {
         try {
             const response = await axios.get(API_BASE_URL);
-            setParkingSpaces(response.data);
+            console.log("🔹 Parking Spaces Response:", response.data); // ✅ Debugging log
+
+            // ✅ Ensure response.data is an array before setting state
+            if (Array.isArray(response.data)) {
+                setParkingSpaces(response.data);
+            } else {
+                console.error("❌ API did not return an array:", response.data);
+                setParkingSpaces([]); // Prevents crashing if response is not an array
+            }
         } catch (error) {
-            console.error("Error fetching parking spaces:", error);
+            console.error("❌ Error fetching parking spaces:", error);
+            setParkingSpaces([]); // Prevents `map()` errors
         }
     };
 
@@ -92,7 +101,7 @@ const ManageParkingPage = () => {
             setEditingId(null);
             fetchParkingSpaces();
         } catch (error) {
-            console.error("Error saving parking spot:", error.response?.data?.errors || error.response?.data || error);
+            console.error("❌ Error saving parking spot:", error.response?.data?.errors || error.response?.data || error);
             alert(`Failed to save the parking spot: ${error.response?.data?.title || "Unknown error"}`);
         }
     };
@@ -121,7 +130,7 @@ const ManageParkingPage = () => {
             alert("Parking spot deleted successfully.");
             fetchParkingSpaces();
         } catch (error) {
-            console.error("Error deleting parking spot:", error);
+            console.error("❌ Error deleting parking spot:", error);
             alert("Failed to delete the parking spot. Please try again.");
         }
     };
@@ -132,81 +141,37 @@ const ManageParkingPage = () => {
             <form onSubmit={handleFormSubmit} style={{ marginBottom: "20px" }}>
                 <h2>{isEditing ? "Edit Parking Spot" : "Add New Parking Spot"}</h2>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    <input
-                        type="text"
-                        name="location"
-                        value={form.location}
-                        onChange={(e) => setForm({ ...form, location: e.target.value })}
-                        placeholder="Location"
-                        required
-                    />
-                    <select
-                        name="availability"
-                        value={form.availability}
-                        onChange={(e) => setForm({ ...form, availability: e.target.value === "true" })}
-                    >
+                    <input type="text" name="location" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Location" required />
+                    <select name="availability" value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value === "true" })}>
                         <option value="true">Available</option>
                         <option value="false">Not Available</option>
                     </select>
-                    <input
-                        type="number"
-                        name="pricePerHour"
-                        value={form.pricePerHour}
-                        onChange={(e) => setForm({ ...form, pricePerHour: e.target.value })}
-                        placeholder="Price per Hour (€)"
-                        required
-                    />
-                    <input
-                        type="text"
-                        name="owner"
-                        value={form.owner}
-                        onChange={(e) => setForm({ ...form, owner: e.target.value })}
-                        placeholder="Owner"
-                    />
-                    <input
-                        type="number"
-                        name="capacity"
-                        value={form.capacity}
-                        onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                        placeholder="Capacity"
-                        required
-                    />
-                    <input
-                        type="text"
-                        name="type"
-                        value={form.type}
-                        onChange={(e) => setForm({ ...form, type: e.target.value })}
-                        placeholder="Type"
-                        required
-                    />
-                    <textarea
-                        name="description"
-                        value={form.description}
-                        onChange={(e) => setForm({ ...form, description: e.target.value })}
-                        placeholder="Description"
-                        rows="3"
-                    />
+                    <input type="number" name="pricePerHour" value={form.pricePerHour} onChange={(e) => setForm({ ...form, pricePerHour: e.target.value })} placeholder="Price per Hour (€)" required />
+                    <input type="text" name="owner" value={form.owner} onChange={(e) => setForm({ ...form, owner: e.target.value })} placeholder="Owner" />
+                    <input type="number" name="capacity" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} placeholder="Capacity" required />
+                    <input type="text" name="type" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} placeholder="Type" required />
+                    <textarea name="description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Description" rows="3" />
                 </div>
                 <button type="submit" style={{ marginTop: "10px" }}>
                     {isEditing ? "Save Changes" : "Add Parking Spot"}
                 </button>
             </form>
             <h2>Existing Parking Spaces</h2>
-            <ul style={{ listStyleType: "none", padding: 0 }}>
-                {parkingSpaces.map((space) => (
-                    <li key={space.id} style={{ border: "1px solid #ddd", borderRadius: "5px", padding: "15px", marginBottom: "10px" }}>
-                        <p><strong>Location:</strong> {space.location}</p>
-                        <p><strong>Availability:</strong> {space.availability ? "Yes" : "No"}</p>
-                        <p><strong>Price per Hour:</strong> €{space.pricePerHour}</p>
-                        <p><strong>Owner:</strong> {space.owner}</p>
-                        <p><strong>Capacity:</strong> {space.capacity}</p>
-                        <p><strong>Type:</strong> {space.type}</p>
-                        <p><strong>Description:</strong> {space.description}</p>
-                        <button type="button" onClick={() => handleEdit(space)} style={{ marginRight: "10px" }}>Edit</button>
-                        <button type="button" onClick={() => handleDelete(space.id)} style={{ backgroundColor: "red", color: "white" }}>Delete</button>
-                    </li>
-                ))}
-            </ul>
+            {Array.isArray(parkingSpaces) && parkingSpaces.length > 0 ? (
+                <ul style={{ listStyleType: "none", padding: 0 }}>
+                    {parkingSpaces.map((space) => (
+                        <li key={space.id} style={{ border: "1px solid #ddd", borderRadius: "5px", padding: "15px", marginBottom: "10px" }}>
+                            <p><strong>Location:</strong> {space.location}</p>
+                            <p><strong>Availability:</strong> {space.availability ? "Yes" : "No"}</p>
+                            <p><strong>Price per Hour:</strong> €{space.pricePerHour}</p>
+                            <button onClick={() => handleEdit(space)}>Edit</button>
+                            <button onClick={() => handleDelete(space.id)} style={{ backgroundColor: "red", color: "white" }}>Delete</button>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No parking spaces available.</p>
+            )}
         </div>
     );
 };

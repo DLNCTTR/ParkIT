@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 
 const LoginPage = () => {
-    const [isSignIn, setIsSignIn] = useState(true); // Toggle between sign-in and register
+    const [isSignIn, setIsSignIn] = useState(true);
     const [formData, setFormData] = useState({
-        name: "",
+        username: "",
         email: "",
         password: "",
     });
     const [message, setMessage] = useState("");
-    const [loading, setLoading] = useState(false); // Show a loading state
+    const [loading, setLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(null); // ✅ Track success/failure
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -17,39 +18,70 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true); // Set loading to true during API call
-        setMessage(""); // Clear previous messages
+        console.log("🔹 handleSubmit triggered!"); // ✅ Debugging
+
+        setLoading(true);
+        setMessage("");
+        setIsSuccess(null);
+
+        const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+        console.log("🔹 API Base URL:", API_BASE_URL); // ✅ Debugging
+
+        if (!API_BASE_URL) {
+            console.error("❌ API base URL is not set.");
+            setMessage("Internal error: API URL not configured.");
+            setIsSuccess(false);
+            setLoading(false);
+            return;
+        }
 
         const endpoint = isSignIn
-            ? `${process.env.REACT_APP_API_BASE_URL}/api/auth/login`
-            : `${process.env.REACT_APP_API_BASE_URL}/api/auth/register`;
-        const method = "POST";
+            ? `${API_BASE_URL}/api/auth/login`
+            : `${API_BASE_URL}/api/auth/register`;
+
+        console.log("🔹 Request Endpoint:", endpoint); // ✅ Debugging
+
+        const payload = isSignIn
+            ? { username: formData.username, password: formData.password } // ✅ Login request should NOT contain email
+            : { username: formData.username, email: formData.email, password: formData.password };
+
+        console.log("🔹 Request Payload:", payload); // ✅ Debugging
 
         try {
             const response = await fetch(endpoint, {
-                method,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
             });
 
-            const data = await response.json();
-            setLoading(false); // Turn off loading after response
+            console.log("🔹 Response Received:", response); // ✅ Debugging
 
-            if (response.ok) {
-                setMessage(isSignIn ? `Welcome, ${data.User.name}!` : "Account created successfully!");
-                if (isSignIn) {
-                    // Store token in localStorage for authentication
-                    localStorage.setItem("token", data.Token);
-                    localStorage.setItem("user", JSON.stringify(data.User));
-                }
-            } else {
-                setMessage(data.Message || "An error occurred.");
+            const data = await response.json();
+            console.log("🔹 Response Data:", data); // ✅ Debugging
+
+            setLoading(false);
+
+            if (!response.ok) {
+                throw new Error(data.Message || "An error occurred.");
+            }
+
+            // ✅ FIX: Ensure we check the correct key `user`, not `User`
+            if (isSignIn && (!data.user || !data.user.username)) {
+                throw new Error("Login successful, but no user data received.");
+            }
+
+            setMessage(isSignIn ? `Welcome, ${data.user?.username || "User"}!` : "Account created successfully!");
+            setIsSuccess(true);
+
+            if (isSignIn) {
+                localStorage.setItem("token", data.token); // ✅ Store token correctly
+                localStorage.setItem("user", JSON.stringify(data.user)); // ✅ Store user data correctly
             }
         } catch (error) {
-            setLoading(false); // Turn off loading on error
-            setMessage("An error occurred while communicating with the server.");
+            setLoading(false);
+            setMessage(error.message || "An error occurred while communicating with the server.");
+            setIsSuccess(false);
+            console.error("❌ Fetch Error:", error.message); // ✅ Debugging
         }
     };
 
@@ -57,26 +89,26 @@ const LoginPage = () => {
         <div style={{ maxWidth: "400px", margin: "0 auto", textAlign: "center" }}>
             <h1>{isSignIn ? "Sign In" : "Create Account"}</h1>
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column" }}>
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    required
+                    style={{ marginBottom: "10px", padding: "8px" }}
+                />
                 {!isSignIn && (
                     <input
-                        type="text"
-                        name="name"
-                        placeholder="Name"
-                        value={formData.name}
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        value={formData.email}
                         onChange={handleInputChange}
                         required
                         style={{ marginBottom: "10px", padding: "8px" }}
                     />
                 )}
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    style={{ marginBottom: "10px", padding: "8px" }}
-                />
                 <input
                     type="password"
                     name="password"
@@ -94,12 +126,13 @@ const LoginPage = () => {
                 onClick={() => {
                     setIsSignIn(!isSignIn);
                     setMessage("");
+                    setIsSuccess(null);
                 }}
                 style={{ padding: "10px", background: "none", border: "1px solid #ccc" }}
             >
                 {isSignIn ? "Switch to Create Account" : "Switch to Sign In"}
             </button>
-            {message && <p style={{ marginTop: "20px" }}>{message}</p>}
+            {message && <p style={{ marginTop: "20px", color: isSuccess ? "green" : "red" }}>{message}</p>}
         </div>
     );
 };

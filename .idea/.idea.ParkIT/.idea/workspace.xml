@@ -11,10 +11,13 @@
     <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="APICreate">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/AuthController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/DTOs/UserRegisterDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/DTOs/UserRegisterDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Data/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Data/AppDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/ParkingController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/ParkingController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ParkIT/Migrations/AppDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Migrations/AppDbContextModelSnapshot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Models/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParkIT/Models/ParkingSpot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Models/ParkingSpot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParkIT/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Navbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Navbar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LoginPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/LoginPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,6 +77,8 @@
       <workItem from="1737962392949" duration="10618000" />
       <workItem from="1737997905122" duration="3821000" />
       <workItem from="1738843066822" duration="6398000" />
+      <workItem from="1738869466420" duration="3079000" />
+      <workItem from="1738891085493" duration="5250000" />
     </task>
     <task id="LOCAL-00001" summary="APILOGIN">
       <option name="closed" value="true" />
@@ -119,5 +124,30 @@
     <MESSAGE value="APILOGIN" />
     <MESSAGE value="APICreate" />
     <option name="LAST_COMMIT_MESSAGE" value="APICreate" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js</url>
+          <line>46</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ParkIT/Controllers/AuthController.cs</url>
+          <line>90</line>
+          <properties documentPath="C:\FYP\ParkIT\ParkIT\Controllers\AuthController.cs" containingFunctionPresentation="Method 'GenerateJwtToken'">
+            <startOffsets>
+              <option value="3324" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3378" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

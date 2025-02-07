@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using NetTopologySuite.Geometries; // Required for spatial data handling
 
 namespace ParkIT.Models
@@ -27,6 +28,14 @@ namespace ParkIT.Models
 
         [Required(ErrorMessage = "Availability status is required.")]
         public bool Availability { get; set; } // Matches the "Availability" column in your database
+
+        // ✅ New: User ID - Tracks the owner of the parking spot
+        [Required(ErrorMessage = "UserId is required to track the owner of the parking spot.")]
+        public int UserId { get; set; }
+
+        // ✅ New: Establishes Relationship with User
+        [ForeignKey("UserId")]
+        public User User { get; set; } 
 
         // Latitude field, automatically derived from GeoLocation
         public double Latitude => GeoLocation?.Y ?? 0; // Y = Latitude

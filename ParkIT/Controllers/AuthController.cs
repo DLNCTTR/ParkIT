@@ -26,15 +26,12 @@ namespace ParkIT.Controllers
             _configuration = configuration;
         }
 
-        // ✅ User Login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto loginDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new { Message = "Invalid input" });
+            if (!ModelState.IsValid) return BadRequest(new { Message = "Invalid input" });
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == loginDto.Username);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginDto.Username);
 
             if (user == null || user.Password != loginDto.Password)
                 return Unauthorized(new { Message = "Invalid username or password" });
@@ -44,22 +41,18 @@ namespace ParkIT.Controllers
             return Ok(new
             {
                 Token = token,
-                User = new { user.Id, user.Username, user.Email }
+                User = new { user.Id, user.Username, user.Email, user.Role }
             });
         }
 
-        // ✅ User Registration
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDto registerDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new { Message = "Invalid input" });
+            if (!ModelState.IsValid) return BadRequest(new { Message = "Invalid input" });
 
-            // ✅ Check for duplicate username
             if (await _context.Users.AnyAsync(u => u.Username == registerDto.Username))
                 return Conflict(new { Message = "Username is already taken" });
 
-            // ✅ Check for duplicate email
             if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
                 return Conflict(new { Message = "Email is already registered" });
 
@@ -67,16 +60,16 @@ namespace ParkIT.Controllers
             {
                 Username = registerDto.Username,
                 Email = registerDto.Email,
-                Password = registerDto.Password // ❌ Plain text (for now)
+                Password = registerDto.Password, // ❌ Plain text for development
+                Role = "User" // ✅ Default role assigned
             };
 
-            _context.Users.Add(user);
+            await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
             return Ok(new { Message = "User registered successfully" });
         }
 
-        // ✅ Generate JWT Token
         private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -88,11 +81,11 @@ namespace ParkIT.Controllers
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Email, user.Email)
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);

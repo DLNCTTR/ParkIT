@@ -37,7 +37,7 @@ const Navbar = () => {
                             <Link to="/manage" className="navbar-link">Manage Parking</Link>
                         </li>
                         <li className="navbar-item">
-                            <span className="navbar-text">Welcome, {user.name}!</span>
+                            <span className="navbar-text">Welcome, {user.username}!</span>
                         </li>
                         <li className="navbar-item">
                             <button onClick={handleLogout} className="navbar-link navbar-button">
