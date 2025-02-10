@@ -2,14 +2,16 @@
 
 import React, { useEffect, useState } from "react";
 
-
 const MapPage = () => {
     const [parkingSpaces, setParkingSpaces] = useState([]);
+    const API_BASE_URL = "https://localhost:7155/api/HomePage"; 
 
     useEffect(() => {
         const fetchParkingSpaces = async () => {
             try {
-                const response = await fetch("/api/parking");
+                const response = await fetch(`${API_BASE_URL}/parking-spaces`); 
+                if (!response.ok) throw new Error("Failed to fetch parking spaces");
+
                 const data = await response.json();
                 setParkingSpaces(data);
             } catch (error) {
@@ -18,13 +20,17 @@ const MapPage = () => {
         };
 
         fetchParkingSpaces();
+
+        // ✅ Auto-refresh every 30 seconds
+        const interval = setInterval(fetchParkingSpaces, 30000);
+        return () => clearInterval(interval);
     }, []);
 
     useEffect(() => {
         if (window.google) {
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 12,
-                center: { lat: 40.7128, lng: -74.0060 }, // Example: Default to New York City
+                center: { lat: 40.7128, lng: -74.0060 },
             });
 
             parkingSpaces.forEach((space) => {

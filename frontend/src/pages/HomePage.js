@@ -2,33 +2,34 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-// HomePage component to display available parking spaces
 const HomePage = () => {
-    const [parkingSpaces, setParkingSpaces] = useState([]); // State for parking spaces
-    const [filteredSpaces, setFilteredSpaces] = useState([]); // State for filtered spaces
-    const [searchQuery, setSearchQuery] = useState(""); // State for the search input
-    const [loading, setLoading] = useState(true); // State for loading indicator
-    const [error, setError] = useState(null); // State for error handling
+    const [parkingSpaces, setParkingSpaces] = useState([]); // State for all parking spaces
+    const [filteredSpaces, setFilteredSpaces] = useState([]); // State for search results
+    const [searchQuery, setSearchQuery] = useState(""); // State for search input
+    const [loading, setLoading] = useState(true); // State for loading status
+    const [error, setError] = useState(null); // State for error messages
 
-    // Fetch parking spaces from the API
+    const API_BASE_URL = "https://localhost:7155/api/HomePage"; // ✅ Updated API endpoint
+
+    // Fetch parking spaces from the API on component mount
     useEffect(() => {
         const fetchParkingSpaces = async () => {
             try {
-                const response = await axios.get("https://localhost:7155/api/parking");
-                setParkingSpaces(response.data); // Set the fetched data to state
-                setFilteredSpaces(response.data); // Initially, all spaces are displayed
+                const response = await axios.get(`${API_BASE_URL}/parking-spaces`);
+                setParkingSpaces(response.data);
+                setFilteredSpaces(response.data); // Display all initially
             } catch (error) {
                 console.error("Error fetching parking spaces:", error);
                 setError("Failed to fetch parking spaces. Please try again later.");
             } finally {
-                setLoading(false); // Disable loading indicator
+                setLoading(false);
             }
         };
 
         fetchParkingSpaces();
     }, []);
 
-    // Update filtered spaces when the search query changes
+    // Search filter
     useEffect(() => {
         const filtered = parkingSpaces.filter((space) =>
             space.location.toLowerCase().includes(searchQuery.toLowerCase())
@@ -36,12 +37,10 @@ const HomePage = () => {
         setFilteredSpaces(filtered);
     }, [searchQuery, parkingSpaces]);
 
-    // Render loading state
     if (loading) {
         return <div>Loading parking spaces...</div>;
     }
 
-    // Render error state
     if (error) {
         return <div style={{ color: "red" }}>{error}</div>;
     }
@@ -50,7 +49,7 @@ const HomePage = () => {
         <div style={{ padding: "20px" }}>
             <h1>Available Parking Spaces</h1>
 
-            {/* Search Bar */}
+            {/* Search Input */}
             <div style={{ marginBottom: "20px" }}>
                 <input
                     type="text"
@@ -66,6 +65,7 @@ const HomePage = () => {
                 />
             </div>
 
+            {/* Parking Spaces List */}
             {filteredSpaces.length > 0 ? (
                 <ul style={{ listStyleType: "none", padding: 0 }}>
                     {filteredSpaces.map((space) => (
@@ -79,16 +79,11 @@ const HomePage = () => {
                             }}
                         >
                             <h2>{space.location}</h2>
-                            <p>
-                                <strong>Price per Hour:</strong> €{space.pricePerHour}
-                            </p>
-                            <p>
-                                <strong>Capacity:</strong> {space.capacity}
-                            </p>
-                            <p>
-                                <strong>Availability:</strong>{" "}
-                                {space.availability ? "Available" : "Not Available"}
-                            </p>
+                            <p><strong>Price per Hour:</strong> €{space.pricePerHour}</p>
+                            <p><strong>Capacity:</strong> {space.capacity}</p>
+                            <p><strong>Availability:</strong> {space.availability ? "Available" : "Not Available"}</p>
+                            <p><strong>Latitude:</strong> {space.latitude}</p>
+                            <p><strong>Longitude:</strong> {space.longitude}</p>
                             <Link
                                 to={`/parking/${space.id}`}
                                 style={{

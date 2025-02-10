@@ -1,9 +1,7 @@
-// src/AddParkingSpot.js
-import React, { useState } from 'react';
-import api from './api';
+// src/AddParkingSpot.js (Updated)
+import React, { useState, useEffect } from 'react';
 
 function AddParkingSpot({ onSpotAdded }) {
-    // Initialize form data state
     const [formData, setFormData] = useState({
         location: '',
         availability: false,
@@ -11,10 +9,37 @@ function AddParkingSpot({ onSpotAdded }) {
         owner: '',
         capacity: 0,
         status: '',
-        type: ''
+        type: '',
+        latitude: 0,
+        longitude: 0,
     });
 
-    // Update form data as user types
+    const API_BASE_URL = "https://localhost:7155/api/HomePage"; 
+
+    useEffect(() => {
+        if (window.google) {
+            const map = new google.maps.Map(document.getElementById("map-picker"), {
+                zoom: 12,
+                center: { lat: 40.7128, lng: -74.0060 },
+            });
+
+            const marker = new google.maps.Marker({
+                position: { lat: 40.7128, lng: -74.0060 },
+                map: map,
+                draggable: true,
+            });
+
+            marker.addListener("dragend", function () {
+                const position = marker.getPosition();
+                setFormData(prevState => ({
+                    ...prevState,
+                    latitude: position.lat(),
+                    longitude: position.lng(),
+                }));
+            });
+        }
+    }, []);
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData({
@@ -23,13 +48,21 @@ function AddParkingSpot({ onSpotAdded }) {
         });
     };
 
-    // Submit form data to the backend
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Send a POST request to add the parking spot
-            const response = await api.post('/parking', formData);
-            onSpotAdded(response.data); // Call the callback to update the list
+            const response = await fetch(`${API_BASE_URL}/parking-space`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) throw new Error("Failed to add parking spot");
+
+            const data = await response.json();
+            onSpotAdded(data);
             setFormData({
                 location: '',
                 availability: false,
@@ -37,7 +70,9 @@ function AddParkingSpot({ onSpotAdded }) {
                 owner: '',
                 capacity: 0,
                 status: '',
-                type: ''
+                type: '',
+                latitude: 0,
+                longitude: 0,
             });
         } catch (error) {
             console.error('Error adding parking spot:', error);
@@ -45,89 +80,27 @@ function AddParkingSpot({ onSpotAdded }) {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Add New Parking Spot</h2>
-            <div>
-                <label>
-                    Location:
-                    <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleChange}
-                        required
-                    />
-                </label>
-            </div>
-            <div>
-                <label>
-                    Availability:
-                    <input
-                        type="checkbox"
-                        name="availability"
-                        checked={formData.availability}
-                        onChange={handleChange}
-                    />
-                </label>
-            </div>
-            <div>
-                <label>
-                    Price:
-                    <input
-                        type="number"
-                        name="price"
-                        value={formData.price}
-                        onChange={handleChange}
-                        required
-                    />
-                </label>
-            </div>
-            <div>
-                <label>
-                    Owner:
-                    <input
-                        type="text"
-                        name="owner"
-                        value={formData.owner}
-                        onChange={handleChange}
-                    />
-                </label>
-            </div>
-            <div>
-                <label>
-                    Capacity:
-                    <input
-                        type="number"
-                        name="capacity"
-                        value={formData.capacity}
-                        onChange={handleChange}
-                    />
-                </label>
-            </div>
-            <div>
-                <label>
-                    Status:
-                    <input
-                        type="text"
-                        name="status"
-                        value={formData.status}
-                        onChange={handleChange}
-                    />
-                </label>
-            </div>
-            <div>
-                <label>
-                    Type:
-                    <input
-                        type="text"
-                        name="type"
-                        value={formData.type}
-                        onChange={handleChange}
-                    />
-                </label>
-            </div>
-            <button type="submit">Add Parking Spot</button>
-        </form>
+        <div>
+            <h2>Add Parking Spot</h2>
+            <form onSubmit={handleSubmit}>
+                <label>Location:</label>
+                <input type="text" name="location" value={formData.location} onChange={handleChange} required />
+
+                <label>Price:</label>
+                <input type="number" name="price" value={formData.price} onChange={handleChange} required />
+
+                <label>Capacity:</label>
+                <input type="number" name="capacity" value={formData.capacity} onChange={handleChange} required />
+
+                <label>Availability:</label>
+                <input type="checkbox" name="availability" checked={formData.availability} onChange={handleChange} />
+
+                <h3>Select Location on Map:</h3>
+                <div id="map-picker" style={{ width: "100%", height: "400px" }}></div>
+
+                <button type="submit">Add Parking Spot</button>
+            </form>
+        </div>
     );
 }
 

@@ -8,16 +8,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="APICreate">
+    <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="APIAdmin">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/AuthController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/HomeController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/HomeController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/ParkingController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/ParkingController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Migrations/AppDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Migrations/AppDbContextModelSnapshot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Models/ParkingSpot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Models/ParkingSpot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Navbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Navbar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LoginPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/LoginPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/AddParkingSpot.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/AddParkingSpot.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/HomePage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/HomePage.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/MapPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/MapPage.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +38,9 @@
     &quot;accountId&quot;: &quot;2692253c-8fd1-4612-ac72-1ce32c2b5b60&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/ParkIT/wwwroot/static/js/main.f78d5696.js.map" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="false" />
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -78,7 +80,10 @@
       <workItem from="1737997905122" duration="3821000" />
       <workItem from="1738843066822" duration="6398000" />
       <workItem from="1738869466420" duration="3079000" />
-      <workItem from="1738891085493" duration="5250000" />
+      <workItem from="1738891085493" duration="7005000" />
+      <workItem from="1738958922595" duration="788000" />
+      <workItem from="1739195042100" duration="5382000" />
+      <workItem from="1739214162660" duration="3611000" />
     </task>
     <task id="LOCAL-00001" summary="APILOGIN">
       <option name="closed" value="true" />
@@ -112,7 +117,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738847801605</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="APIAdmin">
+      <option name="closed" value="true" />
+      <created>1738897060578</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1738897060578</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -123,31 +136,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="APILOGIN" />
     <MESSAGE value="APICreate" />
-    <option name="LAST_COMMIT_MESSAGE" value="APICreate" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js</url>
-          <line>46</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ParkIT/Controllers/AuthController.cs</url>
-          <line>90</line>
-          <properties documentPath="C:\FYP\ParkIT\ParkIT\Controllers\AuthController.cs" containingFunctionPresentation="Method 'GenerateJwtToken'">
-            <startOffsets>
-              <option value="3324" />
-            </startOffsets>
-            <endOffsets>
-              <option value="3378" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="APIAdmin" />
+    <option name="LAST_COMMIT_MESSAGE" value="APIAdmin" />
   </component>
 </project>
