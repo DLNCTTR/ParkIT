@@ -18,14 +18,14 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("🔹 handleSubmit triggered!"); // ✅ Debugging
+        console.log("🚀 handleSubmit triggered!");
 
         setLoading(true);
         setMessage("");
         setIsSuccess(null);
 
         const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-        console.log("🔹 API Base URL:", API_BASE_URL); // ✅ Debugging
+        console.log("🔹 API Base URL:", API_BASE_URL);
 
         if (!API_BASE_URL) {
             console.error("❌ API base URL is not set.");
@@ -39,13 +39,13 @@ const LoginPage = () => {
             ? `${API_BASE_URL}/api/auth/login`
             : `${API_BASE_URL}/api/auth/register`;
 
-        console.log("🔹 Request Endpoint:", endpoint); // ✅ Debugging
+        console.log("🔹 Request Endpoint:", endpoint);
 
         const payload = isSignIn
-            ? { username: formData.username, password: formData.password } // ✅ Login request should NOT contain email
+            ? { username: formData.username, password: formData.password }
             : { username: formData.username, email: formData.email, password: formData.password };
 
-        console.log("🔹 Request Payload:", payload); // ✅ Debugging
+        console.log("🔹 Request Payload:", payload);
 
         try {
             const response = await fetch(endpoint, {
@@ -54,34 +54,39 @@ const LoginPage = () => {
                 body: JSON.stringify(payload),
             });
 
-            console.log("🔹 Response Received:", response); // ✅ Debugging
+            console.log("🔹 Response Received:", response);
 
             const data = await response.json();
-            console.log("🔹 Response Data:", data); // ✅ Debugging
+            console.log("🔹 Response Data:", data);
 
             setLoading(false);
 
             if (!response.ok) {
-                throw new Error(data.Message || "An error occurred.");
+                throw new Error(data.message || "An error occurred.");
             }
-
-            // ✅ FIX: Ensure we check the correct key `user`, not `User`
-            if (isSignIn && (!data.user || !data.user.username)) {
-                throw new Error("Login successful, but no user data received.");
-            }
-
-            setMessage(isSignIn ? `Welcome, ${data.user?.username || "User"}!` : "Account created successfully!");
-            setIsSuccess(true);
 
             if (isSignIn) {
-                localStorage.setItem("token", data.token); // ✅ Store token correctly
-                localStorage.setItem("user", JSON.stringify(data.user)); // ✅ Store user data correctly
+                if (!data.user || !data.user.username || !data.user.id) {
+                    throw new Error("Login successful, but no user data received.");
+                }
+
+                // ✅ Store user details for future requests
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("userId", data.user.id); // ✅ Store user ID
+                localStorage.setItem("user", JSON.stringify(data.user));
+
+                console.log("✅ User Logged In - ID:", data.user.id);
+                setMessage(`Welcome, ${data.user.username}!`);
+            } else {
+                setMessage("Account created successfully! Please sign in.");
             }
+
+            setIsSuccess(true);
         } catch (error) {
             setLoading(false);
             setMessage(error.message || "An error occurred while communicating with the server.");
             setIsSuccess(false);
-            console.error("❌ Fetch Error:", error.message); // ✅ Debugging
+            console.error("❌ Fetch Error:", error.message);
         }
     };
 

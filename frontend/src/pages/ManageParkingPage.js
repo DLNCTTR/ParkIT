@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { GoogleMap, Autocomplete, useLoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, Autocomplete, useLoadScript, MarkerF } from "@react-google-maps/api";
 
 const API_BASE_URL = "https://localhost:7155/api";
 const googleMapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -11,7 +11,7 @@ const mapContainerStyle = {
     height: "400px",
 };
 
-// ✅ Set Cork City as Default Location
+// ✅ Cork City as Default Location
 const defaultCenter = { lat: 51.8985, lng: -8.4756 };
 
 const ManageParkingPage = () => {
@@ -22,7 +22,7 @@ const ManageParkingPage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editingId, setEditingId] = useState(null);
 
-    // ✅ Updated Form to Include All Fields + Marker Position
+    // ✅ Ensure Marker Starts at the Center
     const [form, setForm] = useState({
         address: "",
         pricePerHour: "",
@@ -30,8 +30,8 @@ const ManageParkingPage = () => {
         capacity: "",
         availability: true,
         description: "",
-        latitude: defaultCenter.lat, // 🗺️ Automatically updates from marker placement
-        longitude: defaultCenter.lng, // 🗺️ Automatically updates from marker placement
+        latitude: defaultCenter.lat,
+        longitude: defaultCenter.lng,
     });
 
     const { isLoaded } = useLoadScript({
@@ -81,7 +81,7 @@ const ManageParkingPage = () => {
         }
     };
 
-    // ✅ Handle Place Selection from Autocomplete
+    // ✅ When user selects a place from Autocomplete
     const handlePlaceSelect = () => {
         if (autocomplete) {
             const place = autocomplete.getPlace();
@@ -92,14 +92,14 @@ const ManageParkingPage = () => {
 
             setForm((prevForm) => ({
                 ...prevForm,
-                address: place.name,
+                address: place.formatted_address || place.name,
                 latitude: place.geometry.location.lat(),
                 longitude: place.geometry.location.lng(),
             }));
         }
     };
 
-    // ✅ Allow User to Click on Map to Move Marker
+    // ✅ When user clicks on the map, move the marker & update form state
     const handleMapClick = (event) => {
         setForm((prevForm) => ({
             ...prevForm,
@@ -108,7 +108,7 @@ const ManageParkingPage = () => {
         }));
     };
 
-    // ✅ Allow Marker to Be Dragged
+    // ✅ When user drags the marker, update its position
     const handleMarkerDragEnd = (event) => {
         setForm((prevForm) => ({
             ...prevForm,
@@ -117,35 +117,64 @@ const ManageParkingPage = () => {
         }));
     };
 
+    // ✅ Debugging added inside `handleFormSubmit`
     const handleFormSubmit = async (e) => {
         e.preventDefault();
+        console.log("🚀 handleFormSubmit triggered!");
+
         setError(null);
 
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
+
+        if (!userId) {
+            setError("❌ User ID is missing. Please log in again.");
+            console.error("❌ User ID is missing.");
+            return;
+        }
+
+        console.log("✅ User ID found:", userId);
+
+        // ✅ Ensure valid numbers (prevent NaN/Infinity issues)
+        const pricePerHour = isNaN(parseFloat(form.pricePerHour)) ? 0 : parseFloat(form.pricePerHour);
+        const capacity = isNaN(parseInt(form.capacity, 10)) ? 1 : parseInt(form.capacity, 10);
+        const latitude = isFinite(form.latitude) ? form.latitude : 51.8985;
+        const longitude = isFinite(form.longitude) ? form.longitude : -8.4756;
+
         const payload = {
-            ...form,
-            pricePerHour: parseFloat(form.pricePerHour || "0"),
-            capacity: parseInt(form.capacity || "0", 10),
-            availability: form.availability === "true" || form.availability === true, // Convert to Boolean
+            address: form.address || "Unknown Address",
+            pricePerHour,
+            type: form.type || "Unknown",
+            capacity,
+            availability: form.availability === "true" || form.availability === true,
+            description: form.description || "No description available",
+            latitude,
+            longitude,
+            userId: parseInt(userId),
         };
 
-        const token = localStorage.getItem("token");
+        console.log("📡 Sending API Request with Payload:", payload);
 
         try {
+            let response;
             if (isEditing && editingId) {
-                await axios.put(`${API_BASE_URL}/parking/${editingId}`, payload, {
+                console.log(`✏️ Updating Parking Spot (ID: ${editingId})`);
+                response = await axios.put(`${API_BASE_URL}/parking/${editingId}`, payload, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                alert("✅ Parking spot updated successfully.");
             } else {
-                await axios.post(`${API_BASE_URL}/parking`, payload, {
+                console.log("➕ Adding New Parking Spot...");
+                response = await axios.post(`${API_BASE_URL}/parking`, payload, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                alert("✅ Parking spot added successfully.");
             }
 
+            console.log("✅ API Response:", response.data);
+            alert("✅ Parking spot saved successfully.");
             fetchParkingSpaces(userRole);
         } catch (error) {
-            setError("❌ Failed to save the parking spot.");
+            console.error("❌ Failed to save parking spot:", error.response?.data || error);
+            setError(error.response?.data?.message || "An error occurred while saving the parking spot.");
         }
     };
 
@@ -161,17 +190,16 @@ const ManageParkingPage = () => {
                         <input type="text" placeholder="Search Location" style={{ width: "100%", padding: "10px" }} />
                     </Autocomplete>
 
-                    {/* ✅ Display Google Map */}
+                    {/* ✅ Google Map with Clickable & Draggable Marker */}
                     <GoogleMap
                         mapContainerStyle={mapContainerStyle}
                         center={{ lat: form.latitude, lng: form.longitude }}
                         zoom={14}
                         onClick={handleMapClick} // Click on map moves marker
                     >
-                        {/* ✅ Marker is now ALWAYS visible */}
-                        <Marker
+                        <MarkerF
                             position={{ lat: form.latitude, lng: form.longitude }}
-                            draggable={true}
+                            draggable={true} // ✅ Make marker draggable
                             onDragEnd={handleMarkerDragEnd}
                         />
                     </GoogleMap>
@@ -185,6 +213,16 @@ const ManageParkingPage = () => {
 
                 <input type="text" placeholder="Address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} required />
                 <input type="number" placeholder="Price Per Hour" value={form.pricePerHour} onChange={(e) => setForm({ ...form, pricePerHour: e.target.value })} required />
+                <input type="text" placeholder="Type (Garage, Street, etc.)" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} required />
+                <input type="number" placeholder="Capacity" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} required />
+
+                {/* ✅ Availability and Description fields are untouched */}
+                <select value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })} required>
+                    <option value="true">Available</option>
+                    <option value="false">Unavailable</option>
+                </select>
+
+                <textarea placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required></textarea>
 
                 <button type="submit">{isEditing ? "Update" : "Add"} Parking Spot</button>
             </form>
