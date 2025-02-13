@@ -9,25 +9,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="Usersignin">
-      <change afterPath="$PROJECT_DIR$/ParkIT/Controllers/ParkingSpacesController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/AuthController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/HomeController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/HomeController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/ParkingController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/ParkingController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/DTOs/ParkingSpotDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/DTOs/ParkingSpotDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Data/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Data/AppDbContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Migrations/AppDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Migrations/AppDbContextModelSnapshot.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ParkIT/Models/ParkingSpot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Models/ParkingSpot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Models/User.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.env" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/GoogleMapComponent.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/GoogleMapComponent.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/HomePage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/HomePage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParkIT/ParkIT.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/ParkIT.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,19 +49,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\JetBrains Rider 2024.2.7\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\JetBrains Rider 2024.2.7\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -99,6 +83,7 @@
       <workItem from="1739269451024" duration="3103000" />
       <workItem from="1739329489877" duration="3711000" />
       <workItem from="1739333488317" duration="12079000" />
+      <workItem from="1739414567643" duration="1813000" />
     </task>
     <task id="LOCAL-00001" summary="APILOGIN">
       <option name="closed" value="true" />
@@ -148,7 +133,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739218130537</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Usersignin">
+      <option name="closed" value="true" />
+      <created>1739414636460</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1739414636460</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

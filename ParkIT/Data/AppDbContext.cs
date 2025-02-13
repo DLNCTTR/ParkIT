@@ -9,7 +9,6 @@ namespace ParkIT.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        // ✅ Define Database Tables
         public DbSet<User> Users { get; set; }          
         public DbSet<ParkingSpot> ParkingSpots { get; set; }
 
@@ -19,26 +18,25 @@ namespace ParkIT.Data
 
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
 
-            // ✅ Configure `GeoLocation` as a SQL Server `geography` type
             modelBuilder.Entity<ParkingSpot>()
                 .Property(p => p.GeoLocation)
-                .HasColumnType("geography")  // ✅ Store as `geography`
-                .HasColumnName("GeoLocation")
-                .HasDefaultValue(null);
+                .HasColumnType("geography") 
+                .HasDefaultValueSql("geography::Point(0, 0, 4326)"); // ✅ Default to (0,0)
 
-            // ✅ Ensure Decimal Precision for `PricePerHour`
+            modelBuilder.Entity<ParkingSpot>()
+                .Property(p => p.FormattedAddress)
+                .HasColumnType("NVARCHAR(300)"); // ✅ Ensure column exists
+
             modelBuilder.Entity<ParkingSpot>()
                 .Property(p => p.PricePerHour)
-                .HasPrecision(18, 2); // ✅ Allows large values with two decimal places
+                .HasPrecision(18, 2); 
 
-            // ✅ Ensure Foreign Key Relationship: User (1) → (M) ParkingSpots
             modelBuilder.Entity<ParkingSpot>()
                 .HasOne(p => p.User)
-                .WithMany(u => u.ParkingSpots) // ✅ User must have this property in its model
+                .WithMany(u => u.ParkingSpots)
                 .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Cascade); // ✅ Deleting a User deletes their ParkingSpots
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // ✅ Ensure Unique Constraints for `User` Table
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
@@ -52,8 +50,10 @@ namespace ParkIT.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("YourDatabaseConnectionString",
-                    x => x.UseNetTopologySuite()); // ✅ Enables spatial support
+                optionsBuilder.UseSqlServer(
+                    "Server=localhost\\SQLEXPRESS;Database=ParkITDb;Trusted_Connection=True;MultipleActiveResultSets=true", 
+                    x => x.UseNetTopologySuite() // ✅ Enables spatial support
+                );
             }
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -9,43 +10,38 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ParkIT.Data;
-using System.Text;
+using NetTopologySuite;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Load configuration
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                      .AddEnvironmentVariables();
 
-// ✅ Load JWT settings
 var issuer = builder.Configuration["Jwt:Issuer"];
 var audience = builder.Configuration["Jwt:Audience"];
 var key = builder.Configuration["Jwt:Key"];
 
 if (string.IsNullOrEmpty(issuer) || string.IsNullOrEmpty(audience) || string.IsNullOrEmpty(key))
 {
-    throw new InvalidOperationException("❌ ERROR: Missing JWT configuration in appsettings.json.");
+    throw new InvalidOperationException("ERROR: Missing JWT configuration in appsettings.json.");
 }
 
-Console.WriteLine($"[DEBUG] Jwt:Issuer -> {issuer}");
-Console.WriteLine($"[DEBUG] Jwt:Audience -> {audience}");
-Console.WriteLine($"[DEBUG] Jwt:Key -> ✅ Loaded Successfully");
-
-// ==========================
-// ✅ Configure Services
-// ==========================
+Console.WriteLine($"Jwt:Issuer -> {issuer}");
+Console.WriteLine($"Jwt:Audience -> {audience}");
+Console.WriteLine("Jwt:Key -> Loaded Successfully");
 
 builder.Services.AddControllers();
 
-// ✅ Configure Entity Framework with SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlOptions => sqlOptions.UseNetTopologySuite()
+    ));
 
-// ✅ Add JWT Authentication with proper validation
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = !builder.Environment.IsDevelopment(); // ✅ Only enforce HTTPS in production
+        options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -56,13 +52,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = issuer,
             ValidAudience = audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-            ClockSkew = TimeSpan.Zero // ✅ Prevents expiration delays
+            ClockSkew = TimeSpan.Zero
         };
     });
 
 builder.Services.AddAuthorization();
 
-// ✅ Add Swagger with JWT support
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -93,7 +88,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// ✅ CORS Fix: Load from `appsettings.json`
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", corsBuilder =>
@@ -104,12 +98,8 @@ builder.Services.AddCors(options =>
             .AllowCredentials());
 });
 
-// ==========================
-// ✅ Build the Application
-// ==========================
 var app = builder.Build();
 
-// ✅ Global Exception Handling Middleware (Fix: Return JSON)
 app.UseExceptionHandler(errorApp =>
 {
     errorApp.Run(async context =>
@@ -120,7 +110,6 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-// ✅ Enable Swagger UI only in Development
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -137,18 +126,9 @@ else
     app.UseHsts();
 }
 
-// ✅ Enforce HTTPS Redirection
 app.UseHttpsRedirection();
-
-// ✅ Enable CORS
 app.UseCors("AllowReactApp");
-
-// ✅ Enable Authentication & Authorization Middleware
 app.UseAuthentication();
 app.UseAuthorization();
-
-// ✅ Map API controllers
 app.MapControllers();
-
-// ✅ Start the application
 app.Run();
