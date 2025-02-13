@@ -29,17 +29,29 @@ namespace ParkIT.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<bool>("Availability")
                         .HasColumnType("bit");
 
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("FormattedAddress")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<string>("GeoLocation")
                         .HasColumnType("geography");
 
-                    b.Property<string>("Location")
-                        .IsRequired()
+                    b.Property<string>("PlaceId")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -104,12 +116,17 @@ namespace ParkIT.Migrations
             modelBuilder.Entity("ParkIT.Models.ParkingSpot", b =>
                 {
                     b.HasOne("ParkIT.Models.User", "User")
-                        .WithMany()
+                        .WithMany("ParkingSpots")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ParkIT.Models.User", b =>
+                {
+                    b.Navigation("ParkingSpots");
                 });
 #pragma warning restore 612, 618
         }

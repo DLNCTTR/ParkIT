@@ -28,7 +28,7 @@ namespace ParkIT.Controllers
             _configuration = configuration;
         }
 
-        // ✅ LOGIN Endpoint (No Password Hashing)
+        // ✅ LOGIN Endpoint (With Logging)
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto loginDto)
         {
@@ -37,10 +37,15 @@ namespace ParkIT.Controllers
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginDto.Username);
 
-            if (user == null || user.Password != loginDto.Password) // ❌ No Hashing
+            if (user == null || user.Password != loginDto.Password) // ❌ No Hashing (For Development Only)
+            {
+                Console.WriteLine($"❌ [LOGIN FAILED] Invalid credentials for user: {loginDto.Username}");
                 return Unauthorized(new { Message = "Invalid username or password" });
+            }
 
             var token = GenerateJwtToken(user);
+
+            Console.WriteLine($"✅ [LOGIN SUCCESS] User: {user.Username} (ID: {user.Id}) logged in successfully.");
 
             return Ok(new
             {
@@ -49,7 +54,7 @@ namespace ParkIT.Controllers
             });
         }
 
-        // ✅ REGISTER Endpoint (No Password Hashing)
+        // ✅ REGISTER Endpoint (Without `CreatedAt`)
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDto registerDto)
         {
@@ -66,12 +71,14 @@ namespace ParkIT.Controllers
             {
                 Username = registerDto.Username,
                 Email = registerDto.Email,
-                Password = registerDto.Password, // ❌ Stored in plain text (for development)
+                Password = registerDto.Password, // ❌ No Hashing (For Development Only)
                 Role = "User"
             };
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
+
+            Console.WriteLine($"✅ [USER REGISTERED] New user: {user.Username} (ID: {user.Id}) registered successfully.");
 
             return Ok(new { Message = "User registered successfully" });
         }
@@ -96,6 +103,9 @@ namespace ParkIT.Controllers
             if (user == null)
                 return NotFound("User not found.");
 
+            if (string.IsNullOrEmpty(user.Role))
+                return BadRequest("User role is missing or invalid.");
+
             return Ok(new { role = user.Role });
         }
 
@@ -103,7 +113,15 @@ namespace ParkIT.Controllers
         private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var keyString = _configuration["Jwt:Key"];
+
+            if (string.IsNullOrEmpty(keyString))
+            {
+                Console.WriteLine("❌ ERROR: JWT Key is missing! Check appsettings.json or environment variables.");
+                throw new InvalidOperationException("JWT Key is missing!");
+            }
+
+            var key = Encoding.ASCII.GetBytes(keyString);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -112,9 +130,11 @@ namespace ParkIT.Controllers
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.Role)
+                    new Claim(ClaimTypes.Role, user.Role ?? "User") // ✅ Prevents null exception
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
+                Issuer = _configuration["Jwt:Issuer"],
+                Audience = _configuration["Jwt:Audience"], // ✅ Fix for "The audience 'empty' is invalid"
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

@@ -1,32 +1,59 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { GoogleMap, Autocomplete, useLoadScript, MarkerF } from "@react-google-maps/api";
+
+const API_BASE_URL = "https://localhost:7155/api";
+const googleMapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+const libraries = ["places"];
+
+const mapContainerStyle = {
+    width: "100%",
+    height: "400px",
+};
+
+// ✅ Default center (San Francisco)
+const defaultCenter = { lat: 37.7749, lng: -122.4194 };
 
 const ManageParkingPage = () => {
     const [parkingSpaces, setParkingSpaces] = useState([]);
     const [userRole, setUserRole] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [autocomplete, setAutocomplete] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingId, setEditingId] = useState(null);
+
     const [form, setForm] = useState({
-        location: "",
+        address: "",
+        formattedAddress: "",
+        placeId: "",
         availability: true,
         pricePerHour: "",
         capacity: "",
         type: "",
         description: "",
+        latitude: defaultCenter.lat,
+        longitude: defaultCenter.lng,
     });
-    const [isEditing, setIsEditing] = useState(false);
-    const [editingId, setEditingId] = useState(null);
 
-    const API_BASE_URL = "https://localhost:7155/api";
+    // ✅ Load Google Maps API once
+    const { isLoaded } = useLoadScript({
+        googleMapsApiKey: googleMapsApiKey,
+        libraries,
+    });
 
     useEffect(() => {
         fetchUserRole();
     }, []);
 
-    // ✅ Fetch user role to determine access level
     const fetchUserRole = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setError("❌ Unauthorized: Please log in.");
+            return;
+        }
+
         try {
-            const token = localStorage.getItem("token");
             const response = await axios.get(`${API_BASE_URL}/auth/user-role`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -35,54 +62,124 @@ const ManageParkingPage = () => {
             fetchParkingSpaces(response.data.role);
         } catch (error) {
             console.error("❌ Error fetching user role:", error.response?.data || error);
-            setError("Failed to determine user role. Please log in.");
+            setError("❌ Failed to determine user role. Please log in again.");
         }
     };
 
     const fetchParkingSpaces = async (role) => {
         setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setError("❌ Unauthorized: Please log in.");
+            setLoading(false);
+            return;
+        }
+
         try {
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                throw new Error("❌ User is not authenticated. Please log in.");
-            }
-
-            const endpoint = role === "Admin" ? `${API_BASE_URL}/HomePage/parking-spaces` : `${API_BASE_URL}/parking`;
-
+            const endpoint = role === "Admin" ? `${API_BASE_URL}/parking-spaces` : `${API_BASE_URL}/parking`;
             const response = await axios.get(endpoint, {
-                headers: {
-                    "Authorization": `Bearer ${token}`, // ✅ Include the token
-                    "Content-Type": "application/json",
-                },
+                headers: { Authorization: `Bearer ${token}` },
             });
-
-            if (response.status === 401) {
-                throw new Error("❌ Unauthorized - Token may be expired or invalid.");
-            }
 
             setParkingSpaces(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("❌ Error fetching parking spaces:", error.response?.data || error);
-            setError(error.message);
+            setError("❌ Failed to fetch parking spaces. Please try again.");
         } finally {
             setLoading(false);
         }
     };
 
+    // ✅ Handle Google Maps Autocomplete Selection
+    const handlePlaceSelect = () => {
+        if (autocomplete) {
+            const place = autocomplete.getPlace();
+            if (!place.geometry || !place.geometry.location) {
+                setError("❌ Selected place does not have location data.");
+                return;
+            }
 
+            setForm((prevForm) => ({
+                ...prevForm,
+                address: place.name,
+                formattedAddress: place.formatted_address,
+                placeId: place.place_id,
+                latitude: place.geometry.location.lat(),
+                longitude: place.geometry.location.lng(),
+            }));
+        }
+    };
+
+    // ✅ Handle Map Click to Drop Marker
+    const handleMapClick = (event) => {
+        setForm((prevForm) => ({
+            ...prevForm,
+            latitude: event.latLng.lat(),
+            longitude: event.latLng.lng(),
+        }));
+    };
+
+    // ✅ Handle Edit Click
+    const handleEdit = (space) => {
+        setForm({
+            address: space.address,
+            formattedAddress: space.formattedAddress,
+            placeId: space.placeId,
+            availability: space.availability,
+            pricePerHour: space.pricePerHour,
+            capacity: space.capacity,
+            type: space.type,
+            description: space.description,
+            latitude: space.latitude,
+            longitude: space.longitude,
+        });
+        setIsEditing(true);
+        setEditingId(space.id);
+    };
+
+    // ✅ Handle Delete Click
+    const handleDelete = async (id) => {
+        if (!window.confirm("⚠️ Are you sure you want to delete this parking spot?")) return;
+
+        const token = localStorage.getItem("token");
+
+        try {
+            await axios.delete(`${API_BASE_URL}/parking/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            alert("✅ Parking spot deleted successfully.");
+            fetchParkingSpaces(userRole);
+        } catch (error) {
+            console.error("❌ Error deleting parking spot:", error.response?.data || error);
+            setError("❌ Failed to delete the parking spot. Please try again.");
+        }
+    };
+
+    // ✅ Ensure valid coordinates before submitting
+    const validateCoordinates = (lat, lng) => {
+        if (!lat || !lng || isNaN(lat) || isNaN(lng) || lat === Infinity || lng === Infinity) {
+            return defaultCenter; // ✅ Return default coordinates if invalid
+        }
+        return { lat, lng };
+    };
 
     // ✅ Handle form submission (Add / Edit)
     const handleFormSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
+
+        // ✅ Validate Latitude & Longitude
+        const { lat, lng } = validateCoordinates(form.latitude, form.longitude);
 
         const payload = {
-            location: form.location,
+            ...form,
+            latitude: lat,
+            longitude: lng,
             pricePerHour: parseFloat(form.pricePerHour || "0"),
             capacity: parseInt(form.capacity || "0", 10),
             availability: form.availability === true || form.availability === "true",
-            type: form.type,
-            description: form.description || null,
         };
 
         const token = localStorage.getItem("token");
@@ -92,109 +189,56 @@ const ManageParkingPage = () => {
                 await axios.put(`${API_BASE_URL}/parking/${editingId}`, payload, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                alert("Parking spot updated successfully.");
+                alert("✅ Parking spot updated successfully.");
             } else {
                 await axios.post(`${API_BASE_URL}/parking`, payload, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                alert("Parking spot added successfully.");
+                alert("✅ Parking spot added successfully.");
             }
 
             resetForm();
             fetchParkingSpaces(userRole);
         } catch (error) {
             console.error("❌ Error saving parking spot:", error.response?.data || error);
-            alert(`Failed to save the parking spot: ${error.response?.data?.title || "Unknown error"}`);
+            setError("❌ Failed to save the parking spot. Please try again.");
         }
     };
 
-    // ✅ Handle Edit Click
-    const handleEdit = (space) => {
-        setForm({
-            location: space.location,
-            availability: space.availability,
-            pricePerHour: space.pricePerHour,
-            capacity: space.capacity,
-            type: space.type,
-            description: space.description,
-        });
-        setIsEditing(true);
-        setEditingId(space.id);
-    };
-
-    // ✅ Handle Delete Click
-    const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this parking spot?")) return;
-
-        const token = localStorage.getItem("token");
-
-        try {
-            await axios.delete(`${API_BASE_URL}/parking/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            alert("Parking spot deleted successfully.");
-            fetchParkingSpaces(userRole);
-        } catch (error) {
-            console.error("❌ Error deleting parking spot:", error.response?.data || error);
-            alert("Failed to delete the parking spot. Please try again.");
-        }
-    };
-
-    // ✅ Reset form fields
+    // ✅ Reset Form Function
     const resetForm = () => {
         setForm({
-            location: "",
+            address: "",
+            formattedAddress: "",
+            placeId: "",
             availability: true,
             pricePerHour: "",
             capacity: "",
             type: "",
             description: "",
+            latitude: defaultCenter.lat,
+            longitude: defaultCenter.lng,
         });
         setIsEditing(false);
         setEditingId(null);
     };
 
-    if (loading) return <div>Loading parking spaces...</div>;
-    if (error) return <div style={{ color: "red" }}>{error}</div>;
-
     return (
         <div style={{ padding: "20px" }}>
-            <h1>{userRole === "Admin" ? "All Parking Spaces" : "Manage Your Parking Spaces"}</h1>
+            <h1>{userRole === "Admin" ? "📌 All Parking Spaces" : "🚗 Manage Your Parking Spaces"}</h1>
 
-            <form onSubmit={handleFormSubmit} style={{ marginBottom: "20px" }}>
-                <h2>{isEditing ? "Edit Parking Spot" : "Add New Parking Spot"}</h2>
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    <input type="text" name="location" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Location" required />
-                    <select name="availability" value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value === "true" })}>
-                        <option value="true">Available</option>
-                        <option value="false">Not Available</option>
-                    </select>
-                    <input type="number" name="pricePerHour" value={form.pricePerHour} onChange={(e) => setForm({ ...form, pricePerHour: e.target.value })} placeholder="Price per Hour (€)" required />
-                    <input type="number" name="capacity" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} placeholder="Capacity" required />
-                    <input type="text" name="type" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} placeholder="Type" required />
-                    <textarea name="description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Description" rows="3" />
-                </div>
-                <button type="submit" style={{ marginTop: "10px" }}>
-                    {isEditing ? "Save Changes" : "Add Parking Spot"}
-                </button>
-                {isEditing && <button onClick={resetForm} style={{ marginLeft: "10px", backgroundColor: "gray" }}>Cancel</button>}
-            </form>
+            {error && <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>}
 
-            <h2>Existing Parking Spaces</h2>
-            {parkingSpaces.length > 0 ? (
-                <ul style={{ listStyleType: "none", padding: 0 }}>
-                    {parkingSpaces.map((space) => (
-                        <li key={space.id} style={{ border: "1px solid #ddd", padding: "15px", marginBottom: "10px" }}>
-                            <p><strong>Location:</strong> {space.location}</p>
-                            <p><strong>Availability:</strong> {space.availability ? "Yes" : "No"}</p>
-                            <p><strong>Price per Hour:</strong> €{space.pricePerHour}</p>
-                            <button onClick={() => handleEdit(space)}>Edit</button>
-                            <button onClick={() => handleDelete(space.id)} style={{ backgroundColor: "red", color: "white" }}>Delete</button>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No parking spaces available.</p>
+            {isLoaded && (
+                <>
+                    <Autocomplete onLoad={(auto) => setAutocomplete(auto)} onPlaceChanged={handlePlaceSelect}>
+                        <input type="text" placeholder="Search Location" style={{ width: "100%", padding: "10px" }} />
+                    </Autocomplete>
+
+                    <GoogleMap mapContainerStyle={mapContainerStyle} center={{ lat: form.latitude, lng: form.longitude }} zoom={12} onClick={handleMapClick}>
+                        <MarkerF position={{ lat: form.latitude, lng: form.longitude }} />
+                    </GoogleMap>
+                </>
             )}
         </div>
     );

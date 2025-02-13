@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema; // ✅ Needed for unique constraints
+using System.Collections.Generic;
 
 namespace ParkIT.Models
 {
@@ -14,7 +15,7 @@ namespace ParkIT.Models
         [StringLength(50, ErrorMessage = "Username cannot exceed 50 characters.")]
         public string Username { get; set; }
 
-        // ✅ Password is required with length validation
+        // ✅ Plain-Text Password (⚠️ Not Secure, as per your request)
         [Required(ErrorMessage = "Password is required.")]
         [StringLength(100, ErrorMessage = "Password must be between 6 and 100 characters.", MinimumLength = 6)]
         public string Password { get; set; }
@@ -29,5 +30,8 @@ namespace ParkIT.Models
         [EmailAddress(ErrorMessage = "Invalid email address.")]
         [StringLength(100, ErrorMessage = "Email cannot exceed 100 characters.")]
         public string Email { get; set; }
+
+        // ✅ Relationship with Parking Spots (One User -> Many Parking Spots)
+        public List<ParkingSpot> ParkingSpots { get; set; } = new List<ParkingSpot>(); 
     }
 }

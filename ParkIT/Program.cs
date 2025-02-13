@@ -1,5 +1,7 @@
+using System;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,37 +13,56 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ✅ Load configuration
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                     .AddEnvironmentVariables();
+
+// ✅ Load JWT settings
+var issuer = builder.Configuration["Jwt:Issuer"];
+var audience = builder.Configuration["Jwt:Audience"];
+var key = builder.Configuration["Jwt:Key"];
+
+if (string.IsNullOrEmpty(issuer) || string.IsNullOrEmpty(audience) || string.IsNullOrEmpty(key))
+{
+    throw new InvalidOperationException("❌ ERROR: Missing JWT configuration in appsettings.json.");
+}
+
+Console.WriteLine($"[DEBUG] Jwt:Issuer -> {issuer}");
+Console.WriteLine($"[DEBUG] Jwt:Audience -> {audience}");
+Console.WriteLine($"[DEBUG] Jwt:Key -> ✅ Loaded Successfully");
+
 // ==========================
 // ✅ Configure Services
 // ==========================
 
-// Add controllers for API endpoints
 builder.Services.AddControllers();
 
 // ✅ Configure Entity Framework with SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ✅ Add JWT Authentication
+// ✅ Add JWT Authentication with proper validation
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.RequireHttpsMetadata = !builder.Environment.IsDevelopment(); // ✅ Only enforce HTTPS in production
+        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            ValidIssuer = issuer,
+            ValidAudience = audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+            ClockSkew = TimeSpan.Zero // ✅ Prevents expiration delays
         };
     });
 
-// ✅ Add Authorization
 builder.Services.AddAuthorization();
 
-// ✅ Add Swagger for API documentation with JWT support
+// ✅ Add Swagger with JWT support
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -51,10 +72,9 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API for managing parking spots in the ParkIT system"
     });
 
-    // ✅ Enable JWT Authorization in Swagger UI
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer YOUR_TOKEN')",
+        Description = "Enter 'Bearer {your JWT token}'",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
@@ -73,14 +93,15 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// ✅ Configure CORS policy to allow requests from React frontend
+// ✅ CORS Fix: Load from `appsettings.json`
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", corsBuilder =>
-        corsBuilder.WithOrigins("http://localhost:3000") // Allow requests only from React frontend
-                   .AllowAnyMethod() // Allow all HTTP methods (GET, POST, PUT, DELETE)
-                   .AllowAnyHeader() // Allow all headers
-                   .AllowCredentials()); // Allow cookies for authentication (if required)
+        corsBuilder
+            .WithOrigins(builder.Configuration["AllowedCorsOrigins"]?.Split(",") ?? new[] { "http://localhost:3000" })
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
 });
 
 // ==========================
@@ -88,49 +109,46 @@ builder.Services.AddCors(options =>
 // ==========================
 var app = builder.Build();
 
-// ==========================
-// ✅ Configure Middleware Pipeline
-// ==========================
+// ✅ Global Exception Handling Middleware (Fix: Return JSON)
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = 500;
+        await context.Response.WriteAsync("{ \"error\": \"An unexpected error occurred. Please try again later.\" }");
+    });
+});
 
-// ✅ Environment-specific middleware
+// ✅ Enable Swagger UI only in Development
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage(); // Show detailed error pages
-    app.UseSwagger();                // Enable Swagger for API documentation
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "ParkIT API v1");
-        c.RoutePrefix = "swagger";  // Swagger UI will be accessible at /swagger
+        c.RoutePrefix = "swagger";
     });
 }
 else
 {
-    // ✅ Production environment middleware
-    app.UseExceptionHandler("/Home/Error"); // Handle exceptions globally
-    app.UseHsts();                          // Enforce HTTPS
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
 
-// ✅ Enforce HTTPS for all requests
+// ✅ Enforce HTTPS Redirection
 app.UseHttpsRedirection();
 
-// ✅ Serve static files (e.g., React build files)
-app.UseStaticFiles();
-
-// ✅ Enable routing
-app.UseRouting();
-
-// ✅ Enable CORS policy for React frontend
+// ✅ Enable CORS
 app.UseCors("AllowReactApp");
 
-// ✅ Add Authentication & Authorization Middleware
+// ✅ Enable Authentication & Authorization Middleware
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ✅ Map API controllers to routes (e.g., /api/[controller])
+// ✅ Map API controllers
 app.MapControllers();
-
-// ✅ Fallback to React `index.html` for unknown routes
-app.MapFallbackToFile("index.html");
 
 // ✅ Start the application
 app.Run();

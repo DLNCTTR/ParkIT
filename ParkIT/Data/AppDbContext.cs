@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
-using NetTopologySuite.IO; // ✅ Required for WKTReader
 using ParkIT.Models;
 
 namespace ParkIT.Data
@@ -10,6 +9,7 @@ namespace ParkIT.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        // ✅ Define Database Tables
         public DbSet<User> Users { get; set; }          
         public DbSet<ParkingSpot> ParkingSpots { get; set; }
 
@@ -18,23 +18,27 @@ namespace ParkIT.Data
             base.OnModelCreating(modelBuilder);
 
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
-            var wktReader = new WKTReader(geometryFactory);
 
-            // ✅ Ensure GeoLocation is stored as a SQL Server 'geography' type
+            // ✅ Configure `GeoLocation` as a SQL Server `geography` type
             modelBuilder.Entity<ParkingSpot>()
                 .Property(p => p.GeoLocation)
-                .HasColumnType("geography") // ✅ Explicitly set as geography type
-                .HasConversion(
-                    v => v == null ? null : v.AsText(), // ✅ Convert Point to WKT string before saving
-                    v => v == null ? null : (Point) wktReader.Read(v) // ✅ Convert WKT string back to Point
-                );
+                .HasColumnType("geography")  // ✅ Store as `geography`
+                .HasColumnName("GeoLocation")
+                .HasDefaultValue(null);
 
-            // ✅ Fix Decimal Precision Issue for PricePerHour
+            // ✅ Ensure Decimal Precision for `PricePerHour`
             modelBuilder.Entity<ParkingSpot>()
                 .Property(p => p.PricePerHour)
-                .HasPrecision(18, 2); // ✅ Ensures proper decimal precision (e.g., 999999999999.99)
+                .HasPrecision(18, 2); // ✅ Allows large values with two decimal places
 
-            // ✅ Ensure Unique Constraints for User Table
+            // ✅ Ensure Foreign Key Relationship: User (1) → (M) ParkingSpots
+            modelBuilder.Entity<ParkingSpot>()
+                .HasOne(p => p.User)
+                .WithMany(u => u.ParkingSpots) // ✅ User must have this property in its model
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // ✅ Deleting a User deletes their ParkingSpots
+
+            // ✅ Ensure Unique Constraints for `User` Table
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
