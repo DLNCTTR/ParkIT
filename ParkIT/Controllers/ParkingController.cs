@@ -52,8 +52,8 @@ namespace ParkIT.Controllers
                 Type = p.Type,
                 Capacity = p.Capacity,
                 Availability = p.Availability,
-                Latitude = p.GeoLocation == null ? 0 : p.GeoLocation.Y,
-                Longitude = p.GeoLocation == null ? 0 : p.GeoLocation.X,
+                Latitude = p.GeoLocation != null ? p.GeoLocation.Y : 0,
+                Longitude = p.GeoLocation != null ? p.GeoLocation.X : 0,
                 Description = p.Description
             }).ToListAsync();
 
@@ -88,7 +88,7 @@ namespace ParkIT.Controllers
                 Type = parkingSpotDto.Type,
                 Capacity = parkingSpotDto.Capacity,
                 Availability = parkingSpotDto.Availability,
-                GeoLocation = geometryFactory.CreatePoint(new Coordinate(parkingSpotDto.Longitude, parkingSpotDto.Latitude)),
+                GeoLocation = geometryFactory.CreatePoint(new Coordinate(parkingSpotDto.Longitude, parkingSpotDto.Latitude)), // ✅ Convert to Point
                 Description = parkingSpotDto.Description
             };
 
@@ -127,7 +127,7 @@ namespace ParkIT.Controllers
             spot.Capacity = parkingSpotDto.Capacity;
             spot.Availability = parkingSpotDto.Availability;
             spot.GeoLocation = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326)
-                .CreatePoint(new Coordinate(parkingSpotDto.Longitude, parkingSpotDto.Latitude));
+                .CreatePoint(new Coordinate(parkingSpotDto.Longitude, parkingSpotDto.Latitude)); // ✅ Update location
             spot.Description = parkingSpotDto.Description;
 
             await _context.SaveChangesAsync();

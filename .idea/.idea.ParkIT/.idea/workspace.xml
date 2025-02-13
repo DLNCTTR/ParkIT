@@ -8,10 +8,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="Usersignin">
+    <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="ParkingSpaceEdit">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/Models/ParkingSpot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Models/ParkingSpot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParkIT/ParkIT.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/ParkIT.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/ParkingController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/ParkingController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,6 +84,7 @@
       <workItem from="1739329489877" duration="3711000" />
       <workItem from="1739333488317" duration="12079000" />
       <workItem from="1739414567643" duration="1813000" />
+      <workItem from="1739416699109" duration="7335000" />
     </task>
     <task id="LOCAL-00001" summary="APILOGIN">
       <option name="closed" value="true" />
@@ -141,7 +142,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739414636460</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="ParkingSpaceEdit">
+      <option name="closed" value="true" />
+      <created>1739421317364</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1739421317364</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -154,6 +163,7 @@
     <MESSAGE value="APICreate" />
     <MESSAGE value="APIAdmin" />
     <MESSAGE value="Usersignin" />
-    <option name="LAST_COMMIT_MESSAGE" value="Usersignin" />
+    <MESSAGE value="ParkingSpaceEdit" />
+    <option name="LAST_COMMIT_MESSAGE" value="ParkingSpaceEdit" />
   </component>
 </project>
