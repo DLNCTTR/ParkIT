@@ -11,7 +11,7 @@ const mapContainerStyle = {
     height: "400px",
 };
 
-// ✅ Cork City as Default Location
+// ✅ Default location (Cork City)
 const defaultCenter = { lat: 51.8985, lng: -8.4756 };
 
 const ManageParkingPage = () => {
@@ -22,12 +22,14 @@ const ManageParkingPage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editingId, setEditingId] = useState(null);
 
-    // ✅ Ensure Marker Starts at the Center
+    // ✅ Initialize Form State
     const [form, setForm] = useState({
         address: "",
-        pricePerHour: "",
+        formattedAddress: "",
+        placeId: "",
+        pricePerHour: 0,
         type: "",
-        capacity: "",
+        capacity: 1,
         availability: true,
         description: "",
         latitude: defaultCenter.lat,
@@ -70,7 +72,7 @@ const ManageParkingPage = () => {
         }
 
         try {
-            const endpoint = role === "Admin" ? `${API_BASE_URL}/parking-spaces` : `${API_BASE_URL}/parking`;
+            const endpoint = `${API_BASE_URL}/parking`;
             const response = await axios.get(endpoint, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -81,7 +83,7 @@ const ManageParkingPage = () => {
         }
     };
 
-    // ✅ When user selects a place from Autocomplete
+    // ✅ Handle Google Places Autocomplete Selection
     const handlePlaceSelect = () => {
         if (autocomplete) {
             const place = autocomplete.getPlace();
@@ -92,14 +94,16 @@ const ManageParkingPage = () => {
 
             setForm((prevForm) => ({
                 ...prevForm,
-                address: place.formatted_address || place.name,
+                address: place.formatted_address || "Unknown Address",
+                formattedAddress: place.formatted_address || "",
+                placeId: place.place_id || "",
                 latitude: place.geometry.location.lat(),
                 longitude: place.geometry.location.lng(),
             }));
         }
     };
 
-    // ✅ When user clicks on the map, move the marker & update form state
+    // ✅ Handle Map Click to Move Marker
     const handleMapClick = (event) => {
         setForm((prevForm) => ({
             ...prevForm,
@@ -108,7 +112,7 @@ const ManageParkingPage = () => {
         }));
     };
 
-    // ✅ When user drags the marker, update its position
+    // ✅ Handle Marker Dragging
     const handleMarkerDragEnd = (event) => {
         setForm((prevForm) => ({
             ...prevForm,
@@ -117,11 +121,9 @@ const ManageParkingPage = () => {
         }));
     };
 
-    // ✅ Debugging added inside `handleFormSubmit`
+    // ✅ Handle Form Submission
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        console.log("🚀 handleFormSubmit triggered!");
-
         setError(null);
 
         const token = localStorage.getItem("token");
@@ -129,54 +131,34 @@ const ManageParkingPage = () => {
 
         if (!userId) {
             setError("❌ User ID is missing. Please log in again.");
-            console.error("❌ User ID is missing.");
             return;
         }
 
-        console.log("✅ User ID found:", userId);
-
-        // ✅ Ensure valid numbers (prevent NaN/Infinity issues)
-        const pricePerHour = isNaN(parseFloat(form.pricePerHour)) ? 0 : parseFloat(form.pricePerHour);
-        const capacity = isNaN(parseInt(form.capacity, 10)) ? 1 : parseInt(form.capacity, 10);
-        const latitude = isFinite(form.latitude) ? form.latitude : 51.8985;
-        const longitude = isFinite(form.longitude) ? form.longitude : -8.4756;
-
         const payload = {
             address: form.address || "Unknown Address",
-            pricePerHour,
+            formattedAddress: form.formattedAddress || "Unknown",
+            placeId: form.placeId || "Unknown",
+            pricePerHour: isNaN(parseFloat(form.pricePerHour)) ? 0 : parseFloat(form.pricePerHour),
             type: form.type || "Unknown",
-            capacity,
+            capacity: isNaN(parseInt(form.capacity, 10)) ? 1 : parseInt(form.capacity, 10),
             availability: form.availability === "true" || form.availability === true,
             description: form.description || "No description available",
-            latitude,
-            longitude,
+            latitude: isFinite(form.latitude) ? form.latitude : 51.8985,
+            longitude: isFinite(form.longitude) ? form.longitude : -8.4756,
             userId: parseInt(userId),
         };
 
-        console.log("📡 Sending API Request with Payload:", payload);
-
         try {
-            let response;
-            if (isEditing && editingId) {
-                console.log(`✏️ Updating Parking Spot (ID: ${editingId})`);
-                response = await axios.put(`${API_BASE_URL}/parking/${editingId}`, payload, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-            } else {
-                console.log("➕ Adding New Parking Spot...");
-                response = await axios.post(`${API_BASE_URL}/parking`, payload, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-            }
-
-            console.log("✅ API Response:", response.data);
+            await axios.post(`${API_BASE_URL}/parking`, payload, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             alert("✅ Parking spot saved successfully.");
-            fetchParkingSpaces(userRole);
         } catch (error) {
             console.error("❌ Failed to save parking spot:", error.response?.data || error);
-            setError(error.response?.data?.message || "An error occurred while saving the parking spot.");
+            setError(error.response?.data?.message || "An error occurred.");
         }
     };
+
 
     return (
         <div style={{ padding: "20px" }}>
@@ -195,11 +177,11 @@ const ManageParkingPage = () => {
                         mapContainerStyle={mapContainerStyle}
                         center={{ lat: form.latitude, lng: form.longitude }}
                         zoom={14}
-                        onClick={handleMapClick} // Click on map moves marker
+                        onClick={handleMapClick}
                     >
                         <MarkerF
                             position={{ lat: form.latitude, lng: form.longitude }}
-                            draggable={true} // ✅ Make marker draggable
+                            draggable={true}
                             onDragEnd={handleMarkerDragEnd}
                         />
                     </GoogleMap>
@@ -216,7 +198,6 @@ const ManageParkingPage = () => {
                 <input type="text" placeholder="Type (Garage, Street, etc.)" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} required />
                 <input type="number" placeholder="Capacity" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} required />
 
-                {/* ✅ Availability and Description fields are untouched */}
                 <select value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })} required>
                     <option value="true">Available</option>
                     <option value="false">Unavailable</option>

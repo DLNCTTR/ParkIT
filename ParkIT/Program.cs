@@ -9,14 +9,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using ParkIT.Data;
 using NetTopologySuite;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ✅ Load Configuration from appsettings.json
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                      .AddEnvironmentVariables();
 
+// ✅ Validate JWT Configuration
 var issuer = builder.Configuration["Jwt:Issuer"];
 var audience = builder.Configuration["Jwt:Audience"];
 var key = builder.Configuration["Jwt:Key"];
@@ -30,14 +33,21 @@ Console.WriteLine($"Jwt:Issuer -> {issuer}");
 Console.WriteLine($"Jwt:Audience -> {audience}");
 Console.WriteLine("Jwt:Key -> Loaded Successfully");
 
-builder.Services.AddControllers();
+// ✅ Configure Controllers & Newtonsoft.Json to Fix Serialization Issues
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; // ✅ Prevent self-referencing loops
+    });
 
+// ✅ Configure Database with NetTopologySuite
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlOptions => sqlOptions.UseNetTopologySuite()
     ));
 
+// ✅ Configure Authentication (JWT)
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -52,12 +62,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = issuer,
             ValidAudience = audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.Zero // ✅ Prevents token expiration delay
         };
     });
 
 builder.Services.AddAuthorization();
 
+// ✅ Configure Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -88,6 +99,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// ✅ Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", corsBuilder =>
@@ -100,6 +112,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// ✅ Global Error Handling Middleware
 app.UseExceptionHandler(errorApp =>
 {
     errorApp.Run(async context =>
@@ -110,6 +123,7 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
+// ✅ Enable Swagger in Development
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -126,9 +140,11 @@ else
     app.UseHsts();
 }
 
+// ✅ Middleware Configuration Order
 app.UseHttpsRedirection();
-app.UseCors("AllowReactApp");
+app.UseCors("AllowReactApp"); // 🔹 Apply CORS before Authentication
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();

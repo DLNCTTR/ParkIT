@@ -10,8 +10,9 @@
   <component name="ChangeListManager">
     <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="ParkingSpaceEdit">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LoginPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/LoginPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/ParkingController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/ParkingController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParkIT/DTOs/ParkingSpotDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/DTOs/ParkingSpotDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParkIT/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -86,7 +87,9 @@
       <workItem from="1739333488317" duration="12079000" />
       <workItem from="1739414567643" duration="1813000" />
       <workItem from="1739416699109" duration="8049000" />
-      <workItem from="1739425010138" duration="3298000" />
+      <workItem from="1739425010138" duration="10880000" />
+      <workItem from="1739454679550" duration="2858000" />
+      <workItem from="1739543693787" duration="5523000" />
     </task>
     <task id="LOCAL-00001" summary="APILOGIN">
       <option name="closed" value="true" />
@@ -160,7 +163,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739424326104</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="ParkingSpaceEdit">
+      <option name="closed" value="true" />
+      <created>1739428833999</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1739428833999</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

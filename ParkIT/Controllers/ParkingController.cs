@@ -6,16 +6,18 @@ using ParkIT.DTOs;
 using ParkIT.Models;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ParkIT.Controllers
 {
     [Route("api/parking")]
     [ApiController]
-    [Authorize] // ✅ Requires authentication
+    [Authorize]
     public class ParkingController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -25,141 +27,151 @@ namespace ParkIT.Controllers
             _context = context;
         }
 
-        // ✅ GET: api/parking (Users see their own parking spots, Admins see all)
+        // ✅ GET: api/parking
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ParkingSpotDto>>> GetUserParkingSpots()
         {
+            Console.WriteLine("🔍 [GET] Fetching Parking Spots...");
+
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null) return Unauthorized(new { message = "User ID not found in token." });
+            if (userIdClaim == null)
+            {
+                Console.WriteLine("❌ User ID Not Found");
+                return Unauthorized(new { message = "User ID not found in token." });
+            }
 
             var userId = int.Parse(userIdClaim.Value);
             var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
 
-            IQueryable<ParkingSpot> query = _context.ParkingSpots;
+            Console.WriteLine($"🛠️ User: {userId} | Role: {userRole}");
 
-            if (!string.Equals(userRole, "Admin", System.StringComparison.OrdinalIgnoreCase))
+            IQueryable<ParkingSpot> query = _context.ParkingSpots.AsNoTracking();
+
+            if (!string.Equals(userRole, "Admin", StringComparison.OrdinalIgnoreCase))
             {
                 query = query.Where(p => p.UserId == userId);
             }
 
-            var spaces = await query.Select(p => new ParkingSpotDto
-            {
-                Id = p.Id,
-                Address = p.Address,
-                FormattedAddress = p.FormattedAddress,
-                PlaceId = p.PlaceId,
-                PricePerHour = p.PricePerHour,
-                Type = p.Type,
-                Capacity = p.Capacity,
-                Availability = p.Availability,
-                Latitude = p.GeoLocation != null ? p.GeoLocation.Y : 0,
-                Longitude = p.GeoLocation != null ? p.GeoLocation.X : 0,
-                Description = p.Description
-            }).ToListAsync();
+            var spaces = await query
+                .Select(p => new ParkingSpotDto
+                {
+                    Id = p.Id,
+                    Address = p.Address,
+                    FormattedAddress = p.FormattedAddress ?? "Unknown",
+                    PlaceId = p.PlaceId ?? "Unknown",
+                    PricePerHour = p.PricePerHour,
+                    Type = p.Type,
+                    Capacity = p.Capacity,
+                    Availability = p.Availability,
+                    Latitude = p.GeoLocation != null ? p.GeoLocation.Y : 0,
+                    Longitude = p.GeoLocation != null ? p.GeoLocation.X : 0,
+                    Description = p.Description ?? "No description available"
+                })
+                .ToListAsync();
 
+            Console.WriteLine($"✅ Found {spaces.Count} Parking Spots.");
             return Ok(spaces);
         }
 
-        // ✅ POST: api/parking (Users can add their own, Admins can add any)
+        // ✅ POST: api/parking
         [HttpPost]
         public async Task<IActionResult> CreateParkingSpot([FromBody] ParkingSpotDto parkingSpotDto)
         {
-            if (!ModelState.IsValid) return BadRequest(new { message = "Invalid data provided." });
+            Console.WriteLine("🛠️ [POST] Creating a New Parking Spot...");
 
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null) return Unauthorized(new { message = "User ID not found in token." });
-
-            var userId = int.Parse(userIdClaim.Value);
-            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
-
-            // ✅ Validate Latitude & Longitude
-            if (parkingSpotDto.Latitude == 0 || parkingSpotDto.Longitude == 0)
+            if (parkingSpotDto == null)
             {
-                return BadRequest(new { message = "Invalid GPS coordinates." });
+                Console.WriteLine("❌ Received NULL payload.");
+                return BadRequest(new { message = "Invalid data received." });
             }
 
-            var newSpot = new ParkingSpot
+            try
             {
-                UserId = userId,
-                Address = parkingSpotDto.Address,
-                FormattedAddress = parkingSpotDto.FormattedAddress,
-                PlaceId = parkingSpotDto.PlaceId,
-                PricePerHour = parkingSpotDto.PricePerHour,
-                Type = parkingSpotDto.Type,
-                Capacity = parkingSpotDto.Capacity,
-                Availability = parkingSpotDto.Availability,
-                GeoLocation = geometryFactory.CreatePoint(new Coordinate(parkingSpotDto.Longitude, parkingSpotDto.Latitude)), // ✅ Convert to Point
-                Description = parkingSpotDto.Description
-            };
+                Console.WriteLine("📩 Incoming Data:");
+                Console.WriteLine(JsonSerializer.Serialize(parkingSpotDto, new JsonSerializerOptions { WriteIndented = true }));
 
-            _context.ParkingSpots.Add(newSpot);
-            await _context.SaveChangesAsync();
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null)
+                {
+                    Console.WriteLine("❌ User ID Not Found in Token");
+                    return Unauthorized(new { message = "User ID not found in token." });
+                }
 
-            return CreatedAtAction(nameof(GetUserParkingSpots), new { id = newSpot.Id }, newSpot);
+                var userId = int.Parse(userIdClaim.Value);
+                Console.WriteLine($"🛠️ Creating Parking Spot for User: {userId}");
+
+                // ✅ Validate Data
+                if (parkingSpotDto.PricePerHour < 0 || parkingSpotDto.PricePerHour > 1000)
+                {
+                    Console.WriteLine("❌ Invalid Price Per Hour.");
+                    return BadRequest(new { message = "Invalid price per hour. Must be between 0 and 1000." });
+                }
+
+                if (parkingSpotDto.Capacity < 1)
+                {
+                    Console.WriteLine("❌ Invalid Capacity.");
+                    return BadRequest(new { message = "Capacity must be at least 1." });
+                }
+
+                if (!IsValidNumber(parkingSpotDto.Latitude) || !IsValidNumber(parkingSpotDto.Longitude))
+                {
+                    Console.WriteLine("❌ Invalid GPS Coordinates.");
+                    return BadRequest(new { message = "Invalid GPS coordinates provided." });
+                }
+
+                // ✅ Create ParkingSpot Object
+                var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+                var newSpot = new ParkingSpot
+                {
+                    UserId = userId,
+                    Address = parkingSpotDto.Address ?? "Unknown Address",
+                    FormattedAddress = parkingSpotDto.FormattedAddress ?? "Unknown",
+                    PlaceId = parkingSpotDto.PlaceId ?? "Unknown",
+                    PricePerHour = Math.Round(parkingSpotDto.PricePerHour, 2),
+                    Type = parkingSpotDto.Type ?? "Unknown",
+                    Capacity = parkingSpotDto.Capacity,
+                    Availability = parkingSpotDto.Availability,
+                    GeoLocation = geometryFactory.CreatePoint(new Coordinate(parkingSpotDto.Longitude, parkingSpotDto.Latitude)),
+                    Description = parkingSpotDto.Description ?? "No description provided."
+                };
+
+                Console.WriteLine("✅ Parking Spot Object Created Successfully.");
+                
+                // ✅ Save to DB
+                _context.ParkingSpots.Add(newSpot);
+                await _context.SaveChangesAsync();
+
+                Console.WriteLine("✅ Parking Spot Saved in Database!");
+                return CreatedAtAction(nameof(GetUserParkingSpots), new { id = newSpot.Id }, newSpot);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                Console.WriteLine($"❌ Database Error: {dbEx.InnerException?.Message ?? dbEx.Message}");
+                return StatusCode(500, new { message = "Database error.", error = dbEx.InnerException?.Message ?? dbEx.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ ERROR: {ex}");
+                return StatusCode(500, new { message = "Internal server error.", error = ex.ToString() });
+            }
         }
 
-        // ✅ PUT: api/parking/{id} (Only Owners/Admins can edit)
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateParkingSpot(int id, [FromBody] ParkingSpotDto parkingSpotDto)
+        // ✅ Utility Method to Validate Numbers
+        private bool IsValidNumber(double? number)
         {
-            if (!ModelState.IsValid) return BadRequest(new { message = "Invalid data provided." });
-
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null) return Unauthorized(new { message = "User ID not found in token." });
-
-            var userId = int.Parse(userIdClaim.Value);
-            var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
-
-            var spot = await _context.ParkingSpots.FindAsync(id);
-            if (spot == null) return NotFound(new { message = "Parking spot not found." });
-
-            // ✅ Ensure only the owner or an admin can edit
-            if (!string.Equals(userRole, "Admin", System.StringComparison.OrdinalIgnoreCase) && spot.UserId != userId)
+            if (number == null)
             {
-                return Unauthorized(new { message = "Access denied." });
+                Console.WriteLine("❌ Number is NULL.");
+                return false;
             }
 
-            spot.Address = parkingSpotDto.Address;
-            spot.FormattedAddress = parkingSpotDto.FormattedAddress;
-            spot.PlaceId = parkingSpotDto.PlaceId;
-            spot.PricePerHour = parkingSpotDto.PricePerHour;
-            spot.Type = parkingSpotDto.Type;
-            spot.Capacity = parkingSpotDto.Capacity;
-            spot.Availability = parkingSpotDto.Availability;
-            spot.GeoLocation = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326)
-                .CreatePoint(new Coordinate(parkingSpotDto.Longitude, parkingSpotDto.Latitude)); // ✅ Update location
-            spot.Description = parkingSpotDto.Description;
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Parking spot updated successfully." });
-        }
-
-        // ✅ DELETE: api/parking/{id} (Only Owners/Admins can delete)
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteParkingSpot(int id)
-        {
-            if (id <= 0) return BadRequest(new { message = "Invalid parking spot ID." });
-
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null) return Unauthorized(new { message = "User ID not found in token." });
-
-            var userId = int.Parse(userIdClaim.Value);
-            var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
-
-            var spot = await _context.ParkingSpots.FindAsync(id);
-            if (spot == null) return NotFound(new { message = "Parking spot not found." });
-
-            // ✅ Ensure only the owner or an admin can delete
-            if (!string.Equals(userRole, "Admin", System.StringComparison.OrdinalIgnoreCase) && spot.UserId != userId)
+            if (double.IsNaN(number.Value) || double.IsInfinity(number.Value))
             {
-                return Unauthorized(new { message = "You do not have permission to delete this parking spot." });
+                Console.WriteLine($"❌ Invalid Number Detected: {number}");
+                return false;
             }
 
-            _context.ParkingSpots.Remove(spot);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Parking spot deleted successfully." });
+            return true;
         }
     }
 }
