@@ -33,7 +33,7 @@ Console.WriteLine($"Jwt:Issuer -> {issuer}");
 Console.WriteLine($"Jwt:Audience -> {audience}");
 Console.WriteLine("Jwt:Key -> Loaded Successfully");
 
-// ✅ Configure Controllers & Newtonsoft.Json to Fix Serialization Issues
+// ✅ Configure Controllers & JSON Serialization
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
     {
@@ -68,7 +68,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// ✅ Configure Swagger
+// ✅ Configure Swagger (Available in ALL Environments)
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -123,28 +123,21 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-// ✅ Enable Swagger in Development
-if (app.Environment.IsDevelopment())
+// ✅ Enable Swagger (Always Available)
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "ParkIT API v1");
-        c.RoutePrefix = "swagger";
-    });
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ParkIT API v1");
+    c.RoutePrefix = "swagger"; // ✅ Visit http://localhost:5000/swagger
+});
 
-// ✅ Middleware Configuration Order
+// ✅ Middleware Order Matters
 app.UseHttpsRedirection();
 app.UseCors("AllowReactApp"); // 🔹 Apply CORS before Authentication
 app.UseAuthentication();
 app.UseAuthorization();
+
+// ✅ Ensure API Controllers are Mapped
 app.MapControllers();
 
 app.Run();
