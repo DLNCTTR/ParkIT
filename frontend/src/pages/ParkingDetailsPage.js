@@ -1,53 +1,58 @@
-/* global google */
-
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios"; // ✅ Use axios for fetching data
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+
+const API_BASE_URL = "https://localhost:7155/api"; // ✅ Ensure correct API URL
+
+const mapContainerStyle = {
+    width: "100%",
+    height: "500px",
+};
+
+// ✅ Load API Key from environment variables
+const googleMapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
 const ParkingDetailsPage = () => {
     const { id } = useParams();
     const [parkingSpot, setParkingSpot] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchParkingSpot = async () => {
             try {
-                const response = await fetch(`/api/parking/${id}`);
-                const data = await response.json();
-                setParkingSpot(data);
+                const response = await axios.get(`${API_BASE_URL}/homepage/parking-space/${id}`);
+                setParkingSpot(response.data);
             } catch (error) {
-                console.error("Error fetching parking spot details:", error);
+                console.error("❌ Failed to fetch parking spot:", error);
             }
         };
+
 
         fetchParkingSpot();
     }, [id]);
 
-    useEffect(() => {
-        if (parkingSpot && window.google) {
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 15,
-                center: { lat: parkingSpot.latitude, lng: parkingSpot.longitude },
-            });
-
-            new google.maps.Marker({
-                position: { lat: parkingSpot.latitude, lng: parkingSpot.longitude },
-                map,
-                title: parkingSpot.location,
-            });
-        }
-    }, [parkingSpot]);
-
-    if (!parkingSpot) {
-        return <div>Loading...</div>;
-    }
+    if (error) return <div style={{ color: "red" }}>{error}</div>;
+    if (!parkingSpot) return <div>Loading...</div>;
 
     return (
-        <div>
-            <h1>{parkingSpot.location}</h1>
-            <p>Price per Hour: ${parkingSpot.pricePerHour}</p>
-            <p>Type: {parkingSpot.type}</p>
-            <p>Capacity: {parkingSpot.capacity}</p>
-            <p>Available: {parkingSpot.available ? "Yes" : "No"}</p>
-            <div id="map" style={{ width: "100%", height: "500px" }}></div>
+        <div style={{ padding: "20px" }}>
+            <h1>🚗 {parkingSpot.address}</h1>
+            <p><strong>Price per Hour:</strong> ${parkingSpot.pricePerHour}</p>
+            <p><strong>Type:</strong> {parkingSpot.type}</p>
+            <p><strong>Capacity:</strong> {parkingSpot.capacity}</p>
+            <p><strong>Available:</strong> {parkingSpot.availability ? "Yes ✅" : "No ❌"}</p>
+
+            {/* ✅ Display Google Map with Parking Spot Marker */}
+            <LoadScript googleMapsApiKey={googleMapsApiKey}>
+                <GoogleMap
+                    mapContainerStyle={mapContainerStyle}
+                    center={{ lat: parkingSpot.latitude, lng: parkingSpot.longitude }}
+                    zoom={15}
+                >
+                    <Marker position={{ lat: parkingSpot.latitude, lng: parkingSpot.longitude }} />
+                </GoogleMap>
+            </LoadScript>
         </div>
     );
 };

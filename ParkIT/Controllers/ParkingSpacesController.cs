@@ -23,7 +23,7 @@ namespace ParkIT.Controllers
             _context = context;
         }
 
-        // ✅ GET: api/parking-spaces (Public endpoint for all available parking spots)
+        // ✅ GET: api/parking-spaces (Fetch all available parking spots)
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ParkingSpotDto>>> GetAllParkingSpots()
         {
@@ -58,7 +58,7 @@ namespace ParkIT.Controllers
                 return Unauthorized("User ID not found.");
 
             var spaces = await _context.ParkingSpots
-                .Where(p => p.UserId == int.Parse(userId)) // ✅ Use UserId
+                .Where(p => p.UserId == int.Parse(userId))
                 .AsNoTracking()
                 .Select(p => new ParkingSpotDto
                 {
@@ -78,10 +78,71 @@ namespace ParkIT.Controllers
             return Ok(spaces);
         }
 
+        // ✅ GET: api/homepage/parking-space/{id} (Fetch a single parking spot)
+        [HttpGet("~/api/homepage/parking-space/{id}")]
+        public async Task<ActionResult<ParkingSpotDto>> GetParkingSpot(int id)
+        {
+            var parkingSpot = await _context.ParkingSpots
+                .Where(p => p.Id == id)
+                .AsNoTracking()
+                .Select(p => new ParkingSpotDto
+                {
+                    Id = p.Id,
+                    Address = p.Address,
+                    FormattedAddress = p.FormattedAddress,
+                    PlaceId = p.PlaceId,
+                    PricePerHour = p.PricePerHour,
+                    Type = p.Type,
+                    Capacity = p.Capacity,
+                    Availability = p.Availability,
+                    Latitude = p.GeoLocation.Y,
+                    Longitude = p.GeoLocation.X
+                })
+                .FirstOrDefaultAsync();
+
+            if (parkingSpot == null)
+            {
+                return NotFound($"Parking spot with ID {id} not found.");
+            }
+
+            return Ok(parkingSpot);
+        }
+
+        // ✅ POST: api/parking-spaces (Add new parking spot)
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<ParkingSpotDto>> AddParkingSpot([FromBody] ParkingSpotDto newSpot)
+        {
+            if (newSpot == null)
+                return BadRequest("Invalid parking spot data.");
+
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("User ID not found.");
+
+            var parkingSpot = new ParkingSpot
+            {
+                UserId = int.Parse(userId),
+                Address = newSpot.Address,
+                FormattedAddress = newSpot.FormattedAddress,
+                PlaceId = newSpot.PlaceId,
+                PricePerHour = newSpot.PricePerHour,
+                Type = newSpot.Type,
+                Capacity = newSpot.Capacity,
+                Availability = newSpot.Availability,
+                GeoLocation = new Point(newSpot.Longitude, newSpot.Latitude) { SRID = 4326 }
+            };
+
+            _context.ParkingSpots.Add(parkingSpot);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetParkingSpot), new { id = parkingSpot.Id }, parkingSpot);
+        }
+
         // ✅ PUT: api/parking-spaces/{id} (Update a parking spot)
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> UpdateParkingSpot(int id, [FromBody] ParkingSpot updatedSpot)
+        public async Task<IActionResult> UpdateParkingSpot(int id, [FromBody] ParkingSpotDto updatedSpot)
         {
             var spot = await _context.ParkingSpots.FindAsync(id);
             if (spot == null)
@@ -100,8 +161,8 @@ namespace ParkIT.Controllers
             spot.Capacity = updatedSpot.Capacity;
             spot.Availability = updatedSpot.Availability;
 
-            // ✅ Correctly update GeoLocation instead of modifying read-only Latitude & Longitude
-            spot.GeoLocation = new Point(updatedSpot.GeoLocation.X, updatedSpot.GeoLocation.Y) { SRID = 4326 };
+            // ✅ Update GeoLocation correctly
+            spot.GeoLocation = new Point(updatedSpot.Longitude, updatedSpot.Latitude) { SRID = 4326 };
 
             _context.ParkingSpots.Update(spot);
             await _context.SaveChangesAsync();
