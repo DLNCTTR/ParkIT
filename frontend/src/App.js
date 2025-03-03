@@ -19,6 +19,7 @@ const App = () => {
                 <Route path="/map" element={<MapPage />} />
                 <Route path="*" element={<NotFoundPage />} />
                 <Route path="/parking/:id" element={<ParkingDetailsPage />} />
+                <Route path="/parking-details/:id" element={<ParkingDetailsPage />} />
             </Routes>
         </Router>
     );

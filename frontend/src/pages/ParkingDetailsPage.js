@@ -21,13 +21,13 @@ const ParkingDetailsPage = () => {
     useEffect(() => {
         const fetchParkingSpot = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL}/parking-spaces/${id}`);
+                const response = await axios.get(`${API_BASE_URL}/homepage/parking-space/${id}`);
                 setParkingSpot(response.data);
             } catch (error) {
                 console.error("❌ Failed to fetch parking spot:", error);
-                setError("❌ Failed to load parking details.");
             }
         };
+
 
         fetchParkingSpot();
     }, [id]);

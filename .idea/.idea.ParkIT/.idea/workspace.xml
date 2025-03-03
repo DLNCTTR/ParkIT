@@ -8,12 +8,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="ParkingSpaceEdit">
+    <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="ParkingSpotView">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/GoogleMapComponent.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/GoogleMapComponent.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/MapPage.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/MapPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/MapPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/ParkingSpacesController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/ParkingSpacesController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/ParkingDetailsPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/ParkingDetailsPage.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -57,19 +55,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "manageparking",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\JetBrains Rider 2024.2.7\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;manageparking&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\JetBrains Rider 2024.2.7\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -96,6 +94,7 @@
       <workItem from="1739425010138" duration="10880000" />
       <workItem from="1739454679550" duration="2858000" />
       <workItem from="1739543693787" duration="5523000" />
+      <workItem from="1740158752267" duration="1280000" />
     </task>
     <task id="LOCAL-00001" summary="APILOGIN">
       <option name="closed" value="true" />
@@ -177,7 +176,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739428833999</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="ParkingSpotView">
+      <option name="closed" value="true" />
+      <created>1740123012992</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1740123012992</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -191,6 +198,7 @@
     <MESSAGE value="APIAdmin" />
     <MESSAGE value="Usersignin" />
     <MESSAGE value="ParkingSpaceEdit" />
-    <option name="LAST_COMMIT_MESSAGE" value="ParkingSpaceEdit" />
+    <MESSAGE value="ParkingSpotView" />
+    <option name="LAST_COMMIT_MESSAGE" value="ParkingSpotView" />
   </component>
 </project>
