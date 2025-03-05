@@ -8,10 +8,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="ParkingSpotView">
+    <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="addingdirections">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/ParkingSpacesController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/ParkingSpacesController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/ParkingDetailsPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/ParkingDetailsPage.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -58,7 +57,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;manageparking&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -95,6 +94,7 @@
       <workItem from="1739454679550" duration="2858000" />
       <workItem from="1739543693787" duration="5523000" />
       <workItem from="1740158752267" duration="1280000" />
+      <workItem from="1741122665822" duration="1048000" />
     </task>
     <task id="LOCAL-00001" summary="APILOGIN">
       <option name="closed" value="true" />
@@ -184,7 +184,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740123012992</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="addingdirections">
+      <option name="closed" value="true" />
+      <created>1740979788439</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1740979788439</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -199,6 +207,7 @@
     <MESSAGE value="Usersignin" />
     <MESSAGE value="ParkingSpaceEdit" />
     <MESSAGE value="ParkingSpotView" />
-    <option name="LAST_COMMIT_MESSAGE" value="ParkingSpotView" />
+    <MESSAGE value="addingdirections" />
+    <option name="LAST_COMMIT_MESSAGE" value="addingdirections" />
   </component>
 </project>

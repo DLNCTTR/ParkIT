@@ -79,7 +79,9 @@ namespace ParkIT.Controllers
         }
 
         // ✅ GET: api/homepage/parking-space/{id} (Fetch a single parking spot)
-        [HttpGet("~/api/homepage/parking-space/{id}")]
+        [HttpGet("{id}")] // ✅ Now correctly handles /api/parking-spaces/{id}
+
+
         public async Task<ActionResult<ParkingSpotDto>> GetParkingSpot(int id)
         {
             var parkingSpot = await _context.ParkingSpots
