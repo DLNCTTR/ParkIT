@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { GoogleMap, Autocomplete, useLoadScript, MarkerF } from "@react-google-maps/api";
-
+import "../components/ManageParkingPage.css";
 const API_BASE_URL = "https://localhost:7155/api";
 const googleMapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const libraries = ["places"];
 
 const mapContainerStyle = {
-    width: "100%",
-    height: "400px",
+    width: "100%",  // ✅ Ensures the map is full width of its container
+    maxWidth: "1100px",  // ✅ Adds a max width to prevent stretching too much
+    height: "400px",  // ✅ Increase the height for a bigger map
+    margin: "0 auto", // ✅ Center the map
 };
+
 
 // ✅ Default location (Cork City)
 const defaultCenter = { lat: 51.8985, lng: -8.4756 };
@@ -147,7 +150,7 @@ const ManageParkingPage = () => {
             type: form.type || "Unknown",
             capacity: isNaN(parseInt(form.capacity, 10)) ? 1 : parseInt(form.capacity, 10),
             availability: form.availability === "true" || form.availability === true,
-            description: form.description || "No description available",
+            description: form.description !== "No Description Available" ? form.description : null,
             latitude: isFinite(form.latitude) ? form.latitude : 51.8985,
             longitude: isFinite(form.longitude) ? form.longitude : -8.4756,
             userId: parseInt(userId),
@@ -186,7 +189,7 @@ const ManageParkingPage = () => {
             type: spot.type || "",
             capacity: spot.capacity || 1,
             availability: spot.availability ?? true, // Preserve availability status
-            description: spot.description || "", // ✅ Ensure description is preserved
+            description: spot.description ?? "",
             latitude: spot.latitude || defaultCenter.lat,
             longitude: spot.longitude || defaultCenter.lng,
         });
@@ -214,61 +217,74 @@ const ManageParkingPage = () => {
     };
 
     return (
-        <div style={{padding: "20px"}}>
-            <h1>🚗 Manage Your Parking Spaces</h1>
+        <div className="manage-container">
+            <h1 className="manage-title">🚗 Manage Your Parking Spaces</h1>
 
-            {error && <div style={{color: "red", marginBottom: "10px"}}>{error}</div>}
+            {error && <div className="error-message">{error}</div>}
 
             {isLoaded ? (
-                <>
-                    <Autocomplete onLoad={(auto) => setAutocomplete(auto)} onPlaceChanged={handlePlaceSelect}>
-                        <input type="text" placeholder="Search Location" style={{width: "100%", padding: "10px"}}/>
-                    </Autocomplete>
+                <div> {/* ✅ Ensure the container div is correctly opened and closed */}
+                    {/* ✅ Styled Search Input */}
+                    <div className="search-container">
+                        <Autocomplete onLoad={(auto) => setAutocomplete(auto)} onPlaceChanged={handlePlaceSelect}>
+                            <input type="text" placeholder="🔍 Search Location" className="search-input"/>
+                        </Autocomplete>
+                    </div>
 
-                    <GoogleMap
-                        mapContainerStyle={mapContainerStyle}
-                        center={{lat: form.latitude, lng: form.longitude}}
-                        zoom={14}
-                        onClick={handleMapClick}
-                    >
-                        <MarkerF
-                            position={{lat: form.latitude, lng: form.longitude}}
-                            draggable={true}
-                            onDragEnd={handleMarkerDragEnd}
-                        />
-                    </GoogleMap>
-                </>
+                    {/* ✅ Google Map with Black Border */}
+                    <div className="map-container">
+                        <GoogleMap
+                            className="map-frame"
+                            mapContainerStyle={mapContainerStyle}
+                            center={{ lat: form.latitude, lng: form.longitude }}
+                            zoom={14}
+                            onClick={handleMapClick}
+                        >
+                            <MarkerF
+                                position={{lat: form.latitude, lng: form.longitude}}
+                                draggable={true}
+                                onDragEnd={handleMarkerDragEnd}
+                            />
+                        </GoogleMap>
+                    </div>
+                </div> /* ✅ Ensure this div is properly closed */
             ) : (
                 <p>Loading map...</p>
             )}
 
-            <form onSubmit={handleFormSubmit} style={{marginTop: "20px", padding: "10px", border: "1px solid gray"}}>
-                <h3>{isEditing ? "✏️ Edit Parking Spot" : "➕ Add Parking Spot"}</h3>
 
-                <input type="text" placeholder="Address" value={form.address}
-                       onChange={(e) => setForm({...form, address: e.target.value})} required/>
-                <input type="number" placeholder="Price Per Hour" value={form.pricePerHour}
-                       onChange={(e) => setForm({...form, pricePerHour: e.target.value})} required/>
-                <input type="text" placeholder="Type (Garage, Street, etc.)" value={form.type}
-                       onChange={(e) => setForm({...form, type: e.target.value})} required/>
-                <input type="number" placeholder="Capacity" value={form.capacity}
-                       onChange={(e) => setForm({...form, capacity: e.target.value})} required/>
+    <form className="manage-form" onSubmit={handleFormSubmit}>
+        <h3>{isEditing ? "✏️ Edit Parking Spot" : "➕ Add Parking Spot"}</h3>
 
-                <select value={form.availability} onChange={(e) => setForm({...form, availability: e.target.value})}
-                        required>
-                    <option value="true">Available</option>
-                    <option value="false">Unavailable</option>
-                </select>
+        <input type="text" placeholder="Address" className="input-field" value={form.address}
+               onChange={(e) => setForm({...form, address: e.target.value})} required/>
 
-                <textarea placeholder="Description" value={form.description}
-                          onChange={(e) => setForm({...form, description: e.target.value})} required></textarea>
+        <input type="number" placeholder="Price Per Hour" className="input-field" value={form.pricePerHour}
+               onChange={(e) => setForm({...form, pricePerHour: e.target.value})} required/>
 
-                <button type="submit">{isEditing ? "Update" : "Add"} Parking Spot</button>
+        <input type="text" placeholder="Type (Garage, Street, etc.)" className="input-field" value={form.type}
+               onChange={(e) => setForm({...form, type: e.target.value})} required/>
+
+        <input type="number" placeholder="Capacity" className="input-field" value={form.capacity}
+               onChange={(e) => setForm({...form, capacity: e.target.value})} required/>
+
+        <select className="input-field" value={form.availability}
+                onChange={(e) => setForm({...form, availability: e.target.value})} required>
+            <option value="true">Available</option>
+            <option value="false">Unavailable</option>
+        </select>
+
+        <textarea placeholder="Description (Optional)" className="input-field" value={form.description}
+                          onChange={(e) => setForm({...form, description: e.target.value})} ></textarea>
+
+                <button type="submit" className="btn-primary">
+                    {isEditing ? "Update" : "Add"} Parking Spot
+                </button>
             </form>
 
             {/* ✅ New Parking Spots List Section */}
             <h3>📍 Your Parking Spots</h3>
-            <table border="1" style={{width: "100%", marginTop: "20px"}}>
+            <table border="1" style={{width: "100%", marginTop: "10px"}}>
                 <thead>
                 <tr>
                     <th>Address</th>

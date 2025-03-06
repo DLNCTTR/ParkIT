@@ -1,48 +1,103 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+﻿/* ================== Global Styles ================== */
+html {
+  font-size: 14px;
+  position: relative;
+  min-height: 100%;
 }
 
-a {
-  color: #0077cc;
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
 }
 
+body {
+  margin-bottom: 60px;
+  background-color: #FFFFFF; /* Clean white background */
+  color: #5D6D7E; /* Cool blue-gray text */
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* ================== Navigation Bar ================== */
+.navbar {
+  background-color: #7D3C98; /* Rich Plum */
+  padding: 15px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  color: #F8F8F8 !important; /* Soft White Text */
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+.nav-link {
+  color: #EAEAEA !important; /* Light Gray */
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #A785E2 !important; /* Lighter Purple */
+}
+
+/* ================== Buttons ================== */
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+  background-color: #D72638; /* Bold Red */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  transition: background 0.3s ease-in-out;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.btn-primary:hover {
+  background-color: #A1202D; /* Darker Red */
 }
 
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+/* ================== Main Container ================== */
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 30px;
 }
 
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+/* ================== Card Component ================== */
+.card {
+  background-color: #F8F8F8; /* Soft White */
+  color: #5D6D7E; /* Blue-Gray */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
 }
 
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* ================== Footer ================== */
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
+  background-color: #7D3C98; /* Same as navbar */
+  color: #F8F8F8;
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+}
+
+/* ================== Responsive Design ================== */
+@media (max-width: 768px) {
+  .btn-primary {
+    width: 100%; /* Full-width buttons on small screens */
+  }
+
+  .container {
+    padding: 15px;
+  }
+
+  .navbar {
+    padding: 10px;
+  }
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { GoogleMap, Marker, Autocomplete, useLoadScript } from "@react-google-maps/api";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "../components/MapPage.css";
 
 const API_BASE_URL = "https://localhost:7155/api"; // ✅ API Base URL
 
@@ -103,52 +104,44 @@ const MapPage = () => {
     console.log("🟢 Ready to Render Markers:", parkingSpots);
 
     return (
-        <div style={{ padding: "10px" }}>
-            <h1>🗺️ Available Parking Spots</h1>
+        <div className="map-container">
+            <h1 className="map-title">🗺️ Available Parking Spots</h1>
 
             {/* ✅ Search Bar */}
-            <Autocomplete onLoad={(box) => setSearchBox(box)} onPlaceChanged={handlePlaceSelect}>
-                <input
-                    type="text"
-                    placeholder="Search Location"
-                    style={{
-                        width: "100%",
-                        padding: "10px",
-                        marginBottom: "10px",
-                        fontSize: "16px",
-                    }}
-                />
-            </Autocomplete>
+            <div className="search-container">
+                <Autocomplete onLoad={(box) => setSearchBox(box)} onPlaceChanged={handlePlaceSelect}>
+                    <input type="text" placeholder="🔍 Search Location" className="search-input" />
+                </Autocomplete>
+            </div>
 
-            {/* ✅ Google Map */}
-            <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                center={mapCenter}
-                zoom={zoomLevel}
-            >
-                {/* ✅ Ensure markers appear after the map is loaded */}
-                {markersLoaded && parkingSpots.length > 0 ? (
-                    parkingSpots.map((spot) => {
-                        console.log("📍 Rendering Marker:", spot);
-                        return (
-                            <Marker
-                                key={spot.id}
-                                position={{ lat: parseFloat(spot.lat), lng: parseFloat(spot.lng) }}
-                                title={spot.address}
-                                onClick={() => handleMarkerClick(spot.id)}
-                                options={{
-                                    optimized: false, // ✅ Ensure Marker Renders Properly
-                                    animation: window.google?.maps?.Animation?.DROP, // ✅ Fix Marker Animation Bug
-                                }}
-                            />
-                        );
-                    })
-                ) : (
-                    console.log("⚠️ Markers Not Ready or Empty", parkingSpots)
-                )}
-            </GoogleMap>
+            {/* ✅ Google Map with Proper Framing */}
+            <div className="map-frame">
+                <GoogleMap
+                    mapContainerStyle={mapContainerStyle}
+                    center={mapCenter}
+                    zoom={zoomLevel}
+                >
+                    {/* ✅ Ensure markers appear after the map is loaded */}
+                    {markersLoaded && parkingSpots.length > 0 ? (
+                        parkingSpots.map((spot) => {
+                            console.log("📍 Rendering Marker:", spot);
+                            return (
+                                <Marker
+                                    key={spot.id}
+                                    position={{ lat: parseFloat(spot.lat), lng: parseFloat(spot.lng) }}
+                                    title={spot.address}
+                                    onClick={() => handleMarkerClick(spot.id)}
+                                />
+                            );
+                        })
+                    ) : (
+                        console.log("⚠️ Markers Not Ready or Empty", parkingSpots)
+                    )}
+                </GoogleMap>
+            </div>
         </div>
     );
+
 };
 
 export default MapPage;

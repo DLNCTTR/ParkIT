@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using NetTopologySuite.Geometries;
+using NetTopologySuite.Geometries.Prepared;
 
 namespace ParkIT.Controllers
 {
@@ -40,12 +41,43 @@ namespace ParkIT.Controllers
                     Type = p.Type,
                     Capacity = p.Capacity,
                     Availability = p.Availability,
-                    Latitude = p.GeoLocation.Y, // ✅ Use GeoLocation
-                    Longitude = p.GeoLocation.X // ✅ Use GeoLocation
+                    Latitude = p.GeoLocation.Y,
+                    Longitude = p.GeoLocation.X
                 })
                 .ToListAsync();
 
             return Ok(spaces);
+        }
+
+        // ✅ NEW: GET /api/parking-spaces/nearby (Fetch parking spots by proximity)
+        [HttpGet("nearby")]
+        public async Task<ActionResult<IEnumerable<ParkingSpotDto>>> GetNearbyParkingSpots(
+            [FromQuery] double latitude, 
+            [FromQuery] double longitude, 
+            [FromQuery] double maxDistanceKm = 5)
+        {
+            var userLocation = new Point(longitude, latitude) { SRID = 4326 };
+
+            var nearbySpots = await _context.ParkingSpots
+                .Where(p => p.Availability && p.GeoLocation.IsWithinDistance(userLocation, maxDistanceKm * 1000))
+                .OrderBy(p => p.GeoLocation.Distance(userLocation))
+                .AsNoTracking()
+                .Select(p => new ParkingSpotDto
+                {
+                    Id = p.Id,
+                    Address = p.Address,
+                    FormattedAddress = p.FormattedAddress,
+                    PlaceId = p.PlaceId,
+                    PricePerHour = p.PricePerHour,
+                    Type = p.Type,
+                    Capacity = p.Capacity,
+                    Availability = p.Availability,
+                    Latitude = p.GeoLocation.Y,
+                    Longitude = p.GeoLocation.X
+                })
+                .ToListAsync();
+
+            return Ok(nearbySpots);
         }
 
         // ✅ GET: api/parking-spaces/my-spots (Fetch user's own parking spots)
@@ -70,18 +102,16 @@ namespace ParkIT.Controllers
                     Type = p.Type,
                     Capacity = p.Capacity,
                     Availability = p.Availability,
-                    Latitude = p.GeoLocation.Y, // ✅ Use GeoLocation
-                    Longitude = p.GeoLocation.X // ✅ Use GeoLocation
+                    Latitude = p.GeoLocation.Y,
+                    Longitude = p.GeoLocation.X
                 })
                 .ToListAsync();
 
             return Ok(spaces);
         }
 
-        // ✅ GET: api/homepage/parking-space/{id} (Fetch a single parking spot)
-        [HttpGet("{id}")] // ✅ Now correctly handles /api/parking-spaces/{id}
-
-
+        // ✅ GET: api/parking-spaces/{id} (Fetch a single parking spot)
+        [HttpGet("{id}")]
         public async Task<ActionResult<ParkingSpotDto>> GetParkingSpot(int id)
         {
             var parkingSpot = await _context.ParkingSpots
@@ -103,9 +133,7 @@ namespace ParkIT.Controllers
                 .FirstOrDefaultAsync();
 
             if (parkingSpot == null)
-            {
                 return NotFound($"Parking spot with ID {id} not found.");
-            }
 
             return Ok(parkingSpot);
         }
@@ -156,14 +184,11 @@ namespace ParkIT.Controllers
             if (spot.UserId != int.Parse(userId) && !isAdmin)
                 return Forbid();
 
-            // ✅ Update properties (excluding Latitude & Longitude)
             spot.Address = updatedSpot.Address;
             spot.PricePerHour = updatedSpot.PricePerHour;
             spot.Type = updatedSpot.Type;
             spot.Capacity = updatedSpot.Capacity;
             spot.Availability = updatedSpot.Availability;
-
-            // ✅ Update GeoLocation correctly
             spot.GeoLocation = new Point(updatedSpot.Longitude, updatedSpot.Latitude) { SRID = 4326 };
 
             _context.ParkingSpots.Update(spot);

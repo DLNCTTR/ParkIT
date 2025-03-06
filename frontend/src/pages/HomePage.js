@@ -2,31 +2,34 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useLoadScript } from "@react-google-maps/api";
+import "../components/HomePage.css";
 
-const API_BASE_URL = "https://localhost:7155/api/homepage"; // ✅ Backend API
-const googleMapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ""; // ✅ Load API key from env
-const libraries = ["places"]; // ✅ Load Google Places API
+const API_BASE_URL = "https://localhost:7155/api/parking-spaces"; // Updated Base URL
+const googleMapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "";
+const libraries = ["places"];
 
 const HomePage = () => {
-    const [parkingSpaces, setParkingSpaces] = useState([]); // ✅ Stores all parking spaces
-    const [filteredSpaces, setFilteredSpaces] = useState([]); // ✅ Stores search results
-    const [searchQuery, setSearchQuery] = useState(""); // ✅ Search input state
-    const [loading, setLoading] = useState(true); // ✅ Loading state
-    const [error, setError] = useState(null); // ✅ Error state
+    const [parkingSpaces, setParkingSpaces] = useState([]);
+    const [filteredSpaces, setFilteredSpaces] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [filterByProximity, setFilterByProximity] = useState(false);
+    const [userLocation, setUserLocation] = useState(null);
 
-    // ✅ Load Google Maps API once
+    // ✅ Load Google Maps API
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: googleMapsApiKey,
         libraries,
     });
 
-    // 🚀 Fetch parking spaces from API
+    // 🚀 Fetch parking spaces from API (Standard Fetch)
     useEffect(() => {
         const fetchParkingSpaces = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL}/parking-spaces?onlyAvailable=true`);
+                const response = await axios.get(`${API_BASE_URL}?onlyAvailable=true`);
                 setParkingSpaces(response.data);
-                setFilteredSpaces(response.data); // ✅ Show all by default
+                setFilteredSpaces(response.data);
             } catch (err) {
                 console.error("❌ Error fetching parking spaces:", err);
                 setError("❌ Failed to fetch parking spaces. Please try again later.");
@@ -38,80 +41,111 @@ const HomePage = () => {
         fetchParkingSpaces();
     }, []);
 
+    // 🌍 Fetch Nearby Parking Spots if Filter is Enabled
+    useEffect(() => {
+        if (filterByProximity && userLocation) {
+            const fetchNearbyParkingSpaces = async () => {
+                setLoading(true);
+                try {
+                    const { latitude, longitude } = userLocation;
+                    const response = await axios.get(`${API_BASE_URL}/nearby`, {
+                        params: { latitude, longitude, maxDistanceKm: 5 }
+                    });
+                    setFilteredSpaces(response.data);
+                } catch (err) {
+                    console.error("❌ Error fetching nearby parking spots:", err);
+                    setError("❌ Failed to fetch nearby parking spots.");
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            fetchNearbyParkingSpaces();
+        }
+    }, [filterByProximity, userLocation]);
+
     // 🔍 Handle search input change
     useEffect(() => {
-        const filtered = parkingSpaces.filter((space) =>
-            (space.formattedAddress || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (space.placeId || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (space.type || "").toLowerCase().includes(searchQuery.toLowerCase())
+        if (!filterByProximity) {
+            const filtered = parkingSpaces.filter((space) =>
+                (space.formattedAddress || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (space.placeId || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (space.type || "").toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            setFilteredSpaces(filtered);
+        }
+    }, [searchQuery, parkingSpaces, filterByProximity]);
+
+    // 📍 Get User Location for Proximity Filtering
+    const getUserLocation = () => {
+        if (!navigator.geolocation) {
+            alert("Geolocation is not supported by your browser.");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                setUserLocation({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                });
+                setFilterByProximity(true); // Enable filtering once location is retrieved
+            },
+            (error) => {
+                console.error("❌ Error getting user location:", error);
+                alert("Failed to retrieve your location. Ensure location services are enabled.");
+            }
         );
-        setFilteredSpaces(filtered);
-    }, [searchQuery, parkingSpaces]);
+    };
 
-    if (loading) {
-        return <div>⏳ Loading parking spaces...</div>;
-    }
-
-    if (error) {
-        return <div style={{ color: "red" }}>{error}</div>;
-    }
+    if (loading) return <div className="loading-message">⏳ Loading parking spaces...</div>;
+    if (error) return <div className="error-message">{error}</div>;
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h1>📍 Available Parking Spaces</h1>
+        <div className="homepage-container">
+            <h1 className="homepage-title">📍 Available Parking Spaces</h1>
 
             {/* 🔍 Search Input */}
-            <div style={{ marginBottom: "20px" }}>
+            <div className="search-container">
                 <input
                     type="text"
                     placeholder="🔍 Search by address, place ID, or type..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    style={{
-                        padding: "10px",
-                        width: "100%",
-                        border: "1px solid #ddd",
-                        borderRadius: "5px",
-                    }}
+                    className="search-input"
+                    disabled={filterByProximity} // Disable search when filtering by proximity
                 />
+            </div>
+
+            {/* 🌍 Toggle Proximity Filter */}
+            <div className="filter-container">
+                <button
+                    className="filter-button"
+                    onClick={filterByProximity ? () => setFilterByProximity(false) : getUserLocation}
+                >
+                    {filterByProximity ? "🔄 Reset Filter" : "📍 Find Nearby Parking"}
+                </button>
             </div>
 
             {/* 🚗 Parking Spaces List */}
             {filteredSpaces.length > 0 ? (
-                <ul style={{ listStyleType: "none", padding: 0 }}>
+                <ul className="parking-list">
                     {filteredSpaces.map((space) => (
-                        <li
-                            key={space.id}
-                            style={{
-                                border: "1px solid #ddd",
-                                borderRadius: "5px",
-                                padding: "15px",
-                                marginBottom: "10px",
-                            }}
-                        >
+                        <li key={space.id} className="parking-card">
                             <h2>{space.formattedAddress || "📍 Unknown Location"}</h2>
                             <p><strong>📌 Place ID:</strong> {space.placeId || "N/A"}</p>
                             <p><strong>💰 Price per Hour:</strong> €{space.pricePerHour.toFixed(2)}</p>
                             <p><strong>🚗 Capacity:</strong> {space.capacity}</p>
                             <p><strong>🟢 Availability:</strong> {space.availability ? "Available" : "Not Available"}</p>
                             <p><strong>📍 Coordinates:</strong> {space.latitude}, {space.longitude}</p>
-                            <Link
-                                to={`/parking/${space.id}`}
-                                style={{
-                                    color: "white",
-                                    backgroundColor: "#007bff",
-                                    padding: "10px 15px",
-                                    textDecoration: "none",
-                                    borderRadius: "5px",
-                                }}
-                            >
+                            <Link to={`/parking/${space.id}`} className="view-details-button">
                                 🔍 View Details
                             </Link>
                         </li>
                     ))}
                 </ul>
             ) : (
-                <p>❌ No parking spaces match your search.</p>
+                <p className="no-results-message">❌ No parking spaces match your search.</p>
             )}
         </div>
     );

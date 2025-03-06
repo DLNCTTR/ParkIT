@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../components/LoginPage.css";
 
 const LoginPage = () => {
     const [isSignIn, setIsSignIn] = useState(true);
@@ -9,7 +10,7 @@ const LoginPage = () => {
     });
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(null); // ✅ Track success/failure
+    const [isSuccess, setIsSuccess] = useState(null);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -18,17 +19,13 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("🚀 handleSubmit triggered!");
-
         setLoading(true);
         setMessage("");
         setIsSuccess(null);
 
         const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-        console.log("🔹 API Base URL:", API_BASE_URL);
 
         if (!API_BASE_URL) {
-            console.error("❌ API base URL is not set.");
             setMessage("Internal error: API URL not configured.");
             setIsSuccess(false);
             setLoading(false);
@@ -39,13 +36,9 @@ const LoginPage = () => {
             ? `${API_BASE_URL}/api/auth/login`
             : `${API_BASE_URL}/api/auth/register`;
 
-        console.log("🔹 Request Endpoint:", endpoint);
-
         const payload = isSignIn
             ? { username: formData.username, password: formData.password }
             : { username: formData.username, email: formData.email, password: formData.password };
-
-        console.log("🔹 Request Payload:", payload);
 
         try {
             const response = await fetch(endpoint, {
@@ -54,11 +47,7 @@ const LoginPage = () => {
                 body: JSON.stringify(payload),
             });
 
-            console.log("🔹 Response Received:", response);
-
             const data = await response.json();
-            console.log("🔹 Response Data:", data);
-
             setLoading(false);
 
             if (!response.ok) {
@@ -69,13 +58,10 @@ const LoginPage = () => {
                 if (!data.user || !data.user.username || !data.user.id) {
                     throw new Error("Login successful, but no user data received.");
                 }
-
-                // ✅ Store user details for future requests
                 localStorage.setItem("token", data.token);
-                localStorage.setItem("userId", data.user.id); // ✅ Store user ID
+                localStorage.setItem("userId", data.user.id);
                 localStorage.setItem("user", JSON.stringify(data.user));
 
-                console.log("✅ User Logged In - ID:", data.user.id);
                 setMessage(`Welcome, ${data.user.username}!`);
             } else {
                 setMessage("Account created successfully! Please sign in.");
@@ -86,14 +72,13 @@ const LoginPage = () => {
             setLoading(false);
             setMessage(error.message || "An error occurred while communicating with the server.");
             setIsSuccess(false);
-            console.error("❌ Fetch Error:", error.message);
         }
     };
 
     return (
-        <div style={{ maxWidth: "400px", margin: "0 auto", textAlign: "center" }}>
-            <h1>{isSignIn ? "Sign In" : "Create Account"}</h1>
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column" }}>
+        <div className="login-container">
+            <h1 className="login-title">{isSignIn ? "Sign In" : "Create Account"}</h1>
+            <form onSubmit={handleSubmit} className="login-form">
                 <input
                     type="text"
                     name="username"
@@ -101,7 +86,7 @@ const LoginPage = () => {
                     value={formData.username}
                     onChange={handleInputChange}
                     required
-                    style={{ marginBottom: "10px", padding: "8px" }}
+                    className="input-field"
                 />
                 {!isSignIn && (
                     <input
@@ -111,7 +96,7 @@ const LoginPage = () => {
                         value={formData.email}
                         onChange={handleInputChange}
                         required
-                        style={{ marginBottom: "10px", padding: "8px" }}
+                        className="input-field"
                     />
                 )}
                 <input
@@ -121,9 +106,9 @@ const LoginPage = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                     required
-                    style={{ marginBottom: "10px", padding: "8px" }}
+                    className="input-field"
                 />
-                <button type="submit" style={{ marginBottom: "10px", padding: "10px" }} disabled={loading}>
+                <button type="submit" className="btn-primary" disabled={loading}>
                     {loading ? "Processing..." : isSignIn ? "Sign In" : "Create Account"}
                 </button>
             </form>
@@ -133,11 +118,11 @@ const LoginPage = () => {
                     setMessage("");
                     setIsSuccess(null);
                 }}
-                style={{ padding: "10px", background: "none", border: "1px solid #ccc" }}
+                className="switch-button"
             >
                 {isSignIn ? "Switch to Create Account" : "Switch to Sign In"}
             </button>
-            {message && <p style={{ marginTop: "20px", color: isSuccess ? "green" : "red" }}>{message}</p>}
+            {message && <p className={`message ${isSuccess ? "success-message" : "error-message"}`}>{message}</p>}
         </div>
     );
 };

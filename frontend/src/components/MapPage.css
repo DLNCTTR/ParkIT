@@ -1,0 +1,56 @@
+/* ================== Map Page Styling ================== */
+.map-container {
+    background-color: #E0E0E0; /* ✅ Light Grey Background */
+    padding: 10px;
+    text-align: center;
+    min-height: 100vh;
+}
+
+/* ================== Title ================== */
+.map-title {
+    color: #D72638; /* ✅ Vibrant Red */
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 10px; /* ✅ Reduced gap */
+}
+
+/* ================== Search Box ================== */
+.search-container {
+    margin-bottom: 10px; /* ✅ Reduced space below */
+    text-align: center;
+}
+
+.search-input {
+    padding: 10px;
+    width: 90%;
+    max-width: 400px; /* ✅ Slightly smaller width for better fit */
+    border: 2px solid #9E9E9E;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    color: #4A4A4A;
+    font-size: 16px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-input:focus {
+    border-color: #D72638;
+    outline: none;
+}
+
+/* ================== Map Styling ================== */
+.map-frame {
+    border: 2px solid #000000; /* ✅ Black border */
+    border-radius: 8px; /* ✅ Slightly softer corners */
+    overflow: hidden;
+    max-width: 950px; /* ✅ Slightly smaller map for a balanced layout */
+    margin: 0 auto 10px auto; /* ✅ Reduced bottom spacing */
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ================== Error & Loading Messages ================== */
+.error-message, .loading-message {
+    color: #D72638;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px; /* ✅ Consistent spacing */
+}

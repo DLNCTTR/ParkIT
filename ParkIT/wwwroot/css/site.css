@@ -1,5 +1,8 @@
+/* ================== Global Styles ================== */
 html {
   font-size: 14px;
+  position: relative;
+  min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -8,11 +11,102 @@ html {
   }
 }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
   margin-bottom: 60px;
+  background-color: #E0E0E0; /* Light Grey */
+  color: #4A4A4A; /* Deep Grey Text */
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* ================== Navigation Bar ================== */
+.navbar {
+  background-color: #252525; /* Charcoal Black */
+  padding: 15px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  color: #FFFFFF !important; /* Bright White */
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+.nav-link {
+  color: #FFFFFF !important; /* White Text */
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #D72638 !important; /* Vibrant Red */
+}
+
+/* ================== Buttons ================== */
+.btn-primary {
+  background-color: #D72638; /* Vibrant Red */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  transition: background 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #A1202D; /* Darker Red */
+}
+
+/* ================== Main Container ================== */
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 30px;
+}
+
+/* ================== Card Component ================== */
+.card {
+  background-color: #FFFFFF; /* White */
+  color: #4A4A4A; /* Deep Grey */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* ================== Footer ================== */
+.footer {
+  background-color: #252525; /* Same as navbar */
+  color: #FFFFFF;
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+}
+
+/* ================== Alerts & Warnings ================== */
+.alert {
+  background-color: #D72638; /* Vibrant Red for alerts */
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+/* ================== Responsive Design ================== */
+@media (max-width: 768px) {
+  .btn-primary {
+    width: 100%; /* Full-width buttons on small screens */
+  }
+
+  .container {
+    padding: 15px;
+  }
+
+  .navbar {
+    padding: 10px;
+  }
 }

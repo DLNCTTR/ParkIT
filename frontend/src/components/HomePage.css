@@ -1,0 +1,91 @@
+/* ================== Homepage Container ================== */
+.homepage-container {
+    background-color: #E0E0E0; /* Light Grey */
+    color: #4A4A4A; /* Deep Grey */
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* ================== Title ================== */
+.homepage-title {
+    color: #D72638; /* Vibrant Red */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* ================== Search Input ================== */
+.search-container {
+    margin-bottom: 20px;
+}
+
+.search-input {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #9E9E9E; /* Grey Border */
+    border-radius: 5px;
+    background-color: #EEEEEE;
+    color: #4A4A4A;
+}
+
+.search-input::placeholder {
+    color: #9E9E9E;
+}
+
+.search-input:focus {
+    border-color: #D72638; /* Vibrant Red */
+}
+
+/* ================== Parking List ================== */
+.parking-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* ================== Parking Card ================== */
+.parking-card {
+    background-color: #FFFFFF;
+    color: #4A4A4A;
+    border: 1px solid #9E9E9E; /* Grey Border */
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.parking-card:hover {
+    transform: translateY(-5px);
+}
+
+/* ================== View Details Button ================== */
+.view-details-button {
+    color: white;
+    background-color: #D72638; /* Vibrant Red */
+    padding: 10px 15px;
+    text-decoration: none;
+    border: 1px solid #4A4A4A;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 10px;
+    transition: background 0.3s ease-in-out;
+}
+
+.view-details-button:hover {
+    background-color: #B71C1C; /* Darker Red */
+}
+
+/* ================== Error & Loading Messages ================== */
+.error-message {
+    color: #B71C1C; /* Darker Red */
+    text-align: center;
+    font-weight: bold;
+}
+
+.loading-message {
+    color: #9E9E9E; /* Grey */
+    text-align: center;
+}
+
+.no-results-message {
+    color: #9E9E9E; /* Grey */
+    text-align: center;
+}

@@ -8,10 +8,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="addingdirections">
+    <list default="true" id="6c604138-a34e-499f-b98c-e46f7386fbb0" name="Changes" comment="CSS">
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/HomePage.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/LoginPage.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/ManageParkingPage.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/MapPage.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ParkIT/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ParkIT/Controllers/ParkingSpacesController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Controllers/ParkingSpacesController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/ParkingDetailsPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/ParkingDetailsPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParkIT/Views/Shared/_Layout.cshtml.css" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/Views/Shared/_Layout.cshtml.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParkIT/wwwroot/css/site.css" beforeDir="false" afterPath="$PROJECT_DIR$/ParkIT/wwwroot/css/site.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Navbar.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Navbar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Navbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Navbar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/HomePage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/HomePage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LoginPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/LoginPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/ManageParkingPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/MapPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/MapPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,6 +107,9 @@
       <workItem from="1739543693787" duration="5523000" />
       <workItem from="1740158752267" duration="1280000" />
       <workItem from="1741122665822" duration="1048000" />
+      <workItem from="1741153957959" duration="13691000" />
+      <workItem from="1741202619377" duration="2576000" />
+      <workItem from="1741285572278" duration="1839000" />
     </task>
     <task id="LOCAL-00001" summary="APILOGIN">
       <option name="closed" value="true" />
@@ -192,7 +207,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740979788439</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="CSS">
+      <option name="closed" value="true" />
+      <created>1741154180885</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1741154180885</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -208,6 +231,7 @@
     <MESSAGE value="ParkingSpaceEdit" />
     <MESSAGE value="ParkingSpotView" />
     <MESSAGE value="addingdirections" />
-    <option name="LAST_COMMIT_MESSAGE" value="addingdirections" />
+    <MESSAGE value="CSS" />
+    <option name="LAST_COMMIT_MESSAGE" value="CSS" />
   </component>
 </project>

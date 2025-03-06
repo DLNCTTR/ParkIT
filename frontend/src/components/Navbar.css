@@ -1,11 +1,13 @@
-/* src/components/Navbar.css */
+/* ================== Navbar Styles ================== */
 .navbar {
-    background-color: #333;
+    background-color: #252525; /* Charcoal Black */
     padding: 10px 20px;
     display: flex;
     justify-content: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* ================== Navbar List ================== */
 .navbar-list {
     list-style: none;
     display: flex;
@@ -13,17 +15,62 @@
     padding: 0;
 }
 
+/* ================== Navbar Items ================== */
 .navbar-item {
     margin: 0 15px;
 }
 
+/* ================== Navbar Links ================== */
 .navbar-link {
     text-decoration: none;
-    color: white;
+    color: #FFFFFF; /* Bright White */
     font-size: 16px;
     transition: color 0.3s ease;
 }
 
 .navbar-link:hover {
-    color: #1e90ff;
+    color: #D72638; /* Vibrant Red */
+}
+
+/* ================== Navbar Button ================== */
+.navbar-button {
+    background-color: #D72638; /* Vibrant Red */
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out;
+}
+
+.navbar-button:hover {
+    background-color: #B71C1C; /* Darker Red */
+    color: white;
+}
+
+/* ================== Welcome Text ================== */
+.navbar-text {
+    color: #9E9E9E; /* Grey Accent */
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* ================== Responsive Design ================== */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 10px;
+    }
+
+    .navbar-list {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .navbar-item {
+        margin-bottom: 10px;
+    }
+
+    .navbar-button {
+        width: 100%;
+    }
 }

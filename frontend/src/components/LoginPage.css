@@ -1,0 +1,87 @@
+/* ================== Login Container ================== */
+.login-container {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+    background-color: #FFFFFF; /* White */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* ================== Title ================== */
+.login-title {
+    color: #D72638; /* Vibrant Red */
+    margin-bottom: 15px;
+}
+
+/* ================== Form ================== */
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ================== Input Fields ================== */
+.input-field {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #9E9E9E; /* Grey Border */
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    color: #4A4A4A;
+    margin-bottom: 10px;
+}
+
+.input-field::placeholder {
+    color: #9E9E9E;
+}
+
+.input-field:focus {
+    border-color: #D72638; /* Vibrant Red */
+}
+
+/* ================== Buttons ================== */
+.btn-primary {
+    background-color: #D72638; /* Vibrant Red */
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #B71C1C; /* Darker Red */
+}
+
+/* ================== Switch Button ================== */
+.switch-button {
+    background: none;
+    border: 1px solid #9E9E9E;
+    padding: 10px;
+    color: #4A4A4A;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.switch-button:hover {
+    background-color: #E0E0E0;
+}
+
+/* ================== Messages ================== */
+.message {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.success-message {
+    color: green;
+}
+
+.error-message {
+    color: #B71C1C; /* Darker Red */
+}

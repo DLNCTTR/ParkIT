@@ -1,0 +1,124 @@
+/* ================== Manage Page Background ================== */
+body {
+    background-color: #E0E0E0; /* ✅ Light Grey Background */
+    margin: 0;
+    padding: 0;
+    gap: 15px;
+}
+
+/* ================== Title ================== */
+.manage-title {
+    color: #D72638;
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+/* ================== Search Input ================== */
+.search-input {
+    padding: 10px;
+    width: 100%;
+    max-width: 400px; /* ✅ Prevents stretching */
+    border: 1px solid #9E9E9E;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    color: #4A4A4A;
+    margin-bottom: 10px;
+}
+
+.search-input::placeholder {
+    color: #9E9E9E;
+}
+
+.search-input:focus {
+    border-color: #D72638;
+}
+
+/* ================== Map Styling ================== */
+.map-frame {
+    border: 2px solid #000000; /* ✅ Black Border */
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 900px;
+    margin: 0 auto 10px auto; /* ✅ Less space below */
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ================== Form ================== */
+.manage-form {
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF;
+    padding: 5px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+    max-width: 800px;
+    margin: 2px auto; /* ✅ Reduce space between form and map */
+}  
+
+/* ================== Input Fields ================== */
+.input-field {
+    padding: 10px;
+    width: 100%;
+    max-width: 95%; /* ✅ Keep fields slightly smaller */
+    border: 1px solid #9E9E9E;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    color: #4A4A4A;
+    margin-bottom: 8px; /* ✅ Less spacing between inputs */
+}
+
+.input-field:focus {
+    border-color: #D72638;
+}
+
+/* ================== Buttons ================== */
+.btn-primary {
+    background-color: #D72638;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #B71C1C;
+}
+
+/* ================== Error Messages ================== */
+.error-message {
+    color: #B71C1C;
+    text-align: center;
+    font-weight: bold;
+}
+/* ================== Adjust the Space Between Map and Form ================== */
+.map-frame {
+    border: 2px solid #000000; /* ✅ Ensure the map has a frame */
+    border-radius: 8px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px; /* ✅ Small but consistent space */
+}
+
+/* ================== Reduce Space Between Map & Form ================== */
+.manage-form {
+    margin-top: 5px !important;  /* ✅ Reduce top margin of form */
+}
+
+/* ================== Responsive Fixes ================== */
+@media (max-width: 768px) {
+    .map-frame {
+        max-width: 100%; /* ✅ Ensures responsiveness */
+    }
+
+    .manage-form {
+        max-width: 95%;
+    }
+
+    .input-field {
+        width: 100%;
+    }
+}
