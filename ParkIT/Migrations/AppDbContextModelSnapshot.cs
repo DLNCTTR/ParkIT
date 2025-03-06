@@ -75,7 +75,7 @@ namespace ParkIT.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ParkingSpots");
+                    b.ToTable("ParkingSpots", (string)null);
                 });
 
             modelBuilder.Entity("ParkIT.Models.User", b =>
@@ -114,7 +114,7 @@ namespace ParkIT.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ParkIT.Models.ParkingSpot", b =>

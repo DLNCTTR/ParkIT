@@ -68,3 +68,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+[net6.0]:
+Top-level Package                                               Requested   Resolved
+> Microsoft.AspNetCore.Authentication.JwtBearer                 6.0.12      6.0.12
+> Microsoft.AspNetCore.Mvc.NewtonsoftJson                       6.0.12      6.0.12
+> Microsoft.EntityFrameworkCore.Design                          6.0.16      6.0.16
+> Microsoft.EntityFrameworkCore.SqlServer                       6.0.16      6.0.16
+> Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite      6.0.16      6.0.16
+> Microsoft.EntityFrameworkCore.Tools                           6.0.16      6.0.16
+> Swashbuckle.AspNetCore                                        6.9.0       6.9.0

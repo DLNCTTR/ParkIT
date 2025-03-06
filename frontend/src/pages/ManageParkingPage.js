@@ -33,6 +33,7 @@ const ManageParkingPage = () => {
         pricePerHour: 0,
         type: "",
         capacity: 1,
+        currentCapacity: 0,
         availability: true,
         description: "",
         latitude: defaultCenter.lat,
@@ -188,6 +189,7 @@ const ManageParkingPage = () => {
             pricePerHour: spot.pricePerHour || 0,
             type: spot.type || "",
             capacity: spot.capacity || 1,
+            currentCapacity: spot.currentCapacity || 0,
             availability: spot.availability ?? true, // Preserve availability status
             description: spot.description ?? "",
             latitude: spot.latitude || defaultCenter.lat,
@@ -253,29 +255,39 @@ const ManageParkingPage = () => {
             )}
 
 
-    <form className="manage-form" onSubmit={handleFormSubmit}>
-        <h3>{isEditing ? "✏️ Edit Parking Spot" : "➕ Add Parking Spot"}</h3>
+            <form className="manage-form" onSubmit={handleFormSubmit}>
+                <h3>{isEditing ? "✏️ Edit Parking Spot" : "➕ Add Parking Spot"}</h3>
 
-        <input type="text" placeholder="Address" className="input-field" value={form.address}
-               onChange={(e) => setForm({...form, address: e.target.value})} required/>
+                <input type="text" placeholder="Address" className="input-field" value={form.address}
+                       onChange={(e) => setForm({...form, address: e.target.value})} required/>
 
-        <input type="number" placeholder="Price Per Hour" className="input-field" value={form.pricePerHour}
-               onChange={(e) => setForm({...form, pricePerHour: e.target.value})} required/>
+                <input type="number" placeholder="Price Per Hour" className="input-field" value={form.pricePerHour}
+                       onChange={(e) => setForm({...form, pricePerHour: e.target.value})} required/>
 
-        <input type="text" placeholder="Type (Garage, Street, etc.)" className="input-field" value={form.type}
-               onChange={(e) => setForm({...form, type: e.target.value})} required/>
+                <input type="text" placeholder="Type (Garage, Street, etc.)" className="input-field" value={form.type}
+                       onChange={(e) => setForm({...form, type: e.target.value})} required/>
 
-        <input type="number" placeholder="Capacity" className="input-field" value={form.capacity}
-               onChange={(e) => setForm({...form, capacity: e.target.value})} required/>
+                <input type="number" placeholder="Capacity" className="input-field" value={form.capacity}
+                       onChange={(e) => setForm({...form, capacity: e.target.value})} required/>
 
-        <select className="input-field" value={form.availability}
-                onChange={(e) => setForm({...form, availability: e.target.value})} required>
-            <option value="true">Available</option>
-            <option value="false">Unavailable</option>
-        </select>
+                <input
+                    type="number"
+                    placeholder="Current Capacity"
+                    className="input-field"
+                    value={form.currentCapacity}
+                    onChange={(e) => setForm({...form, currentCapacity: e.target.value})}
+                    min="0"
+                />
 
-        <textarea placeholder="Description (Optional)" className="input-field" value={form.description}
-                          onChange={(e) => setForm({...form, description: e.target.value})} ></textarea>
+
+                <select className="input-field" value={form.availability}
+                        onChange={(e) => setForm({...form, availability: e.target.value})} required>
+                    <option value="true">Available</option>
+                    <option value="false">Unavailable</option>
+                </select>
+
+                <textarea placeholder="Description (Optional)" className="input-field" value={form.description}
+                          onChange={(e) => setForm({...form, description: e.target.value})}></textarea>
 
                 <button type="submit" className="btn-primary">
                     {isEditing ? "Update" : "Add"} Parking Spot
