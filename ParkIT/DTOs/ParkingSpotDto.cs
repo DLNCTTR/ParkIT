@@ -8,7 +8,8 @@ public class ParkingSpotDto
     public string PlaceId { get; set; }
     public decimal PricePerHour { get; set; }
     public string Type { get; set; }
-    public int Capacity { get; set; }
+    public int TotalCapacity { get; set; }
+    public int CurrentCapacity { get; set; }
     public bool Availability { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { GoogleMap, Autocomplete, useLoadScript, MarkerF } from "@react-google-maps/api";
 import "../components/ManageParkingPage.css";
+
 const API_BASE_URL = "https://localhost:7155/api";
 const googleMapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const libraries = ["places"];
@@ -33,6 +34,7 @@ const ManageParkingPage = () => {
         pricePerHour: 0,
         type: "",
         capacity: 1,
+        totalCapacity: 1,  // ✅ Renamed from "capacity"
         currentCapacity: 0,
         availability: true,
         description: "",
@@ -112,6 +114,15 @@ const ManageParkingPage = () => {
         }
     };
 
+    // ✅ Validate Current Capacity 
+    const handleCurrentCapacityChange = (e) => {
+        const currentValue = parseInt(e.target.value, 10);
+        setForm((prevForm) => ({
+            ...prevForm,
+            currentCapacity: currentValue,
+        }));
+    };
+
     // ✅ Handle Map Click to Move Marker
     const handleMapClick = (event) => {
         setForm((prevForm) => ({
@@ -149,7 +160,8 @@ const ManageParkingPage = () => {
             placeId: form.placeId || "Unknown",
             pricePerHour: isNaN(parseFloat(form.pricePerHour)) ? 0 : parseFloat(form.pricePerHour),
             type: form.type || "Unknown",
-            capacity: isNaN(parseInt(form.capacity, 10)) ? 1 : parseInt(form.capacity, 10),
+            totalCapacity: Math.max(1, parseInt(form.totalCapacity, 10)),  // ✅ Ensures at least 1
+            currentCapacity: parseInt(form.currentCapacity, 10) || 0,  // ✅ Allows 0
             availability: form.availability === "true" || form.availability === true,
             description: form.description !== "No Description Available" ? form.description : null,
             latitude: isFinite(form.latitude) ? form.latitude : 51.8985,
@@ -188,7 +200,7 @@ const ManageParkingPage = () => {
             placeId: spot.placeId || "",
             pricePerHour: spot.pricePerHour || 0,
             type: spot.type || "",
-            capacity: spot.capacity || 1,
+            totalcapacity: spot.capacity || 1,
             currentCapacity: spot.currentCapacity || 0,
             availability: spot.availability ?? true, // Preserve availability status
             description: spot.description ?? "",
@@ -267,17 +279,11 @@ const ManageParkingPage = () => {
                 <input type="text" placeholder="Type (Garage, Street, etc.)" className="input-field" value={form.type}
                        onChange={(e) => setForm({...form, type: e.target.value})} required/>
 
-                <input type="number" placeholder="Capacity" className="input-field" value={form.capacity}
-                       onChange={(e) => setForm({...form, capacity: e.target.value})} required/>
+                <input type="number" placeholder="Total Capacity" className="input-field" value={form.totalCapacity}
+                       onChange={(e) => setForm({...form, totalCapacity: e.target.value})} min="1" required/>
 
-                <input
-                    type="number"
-                    placeholder="Current Capacity"
-                    className="input-field"
-                    value={form.currentCapacity}
-                    onChange={(e) => setForm({...form, currentCapacity: e.target.value})}
-                    min="0"
-                />
+                <input type="number" placeholder="Current Capacity" className="input-field" value={form.currentCapacity}
+                       onChange={handleCurrentCapacityChange} min="0" required/>
 
 
                 <select className="input-field" value={form.availability}

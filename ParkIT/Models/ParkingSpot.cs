@@ -32,11 +32,16 @@ namespace ParkIT.Models
         [Required(ErrorMessage = "Type is required.")]
         [StringLength(50, ErrorMessage = "Type cannot exceed 50 characters.")]
         public string Type { get; set; }
-
-        // Capacity (number of vehicles it can hold)
+        
+        // Total Capacity (number of vehicles it can hold)
         [Required(ErrorMessage = "Capacity is required.")]
         [Range(1, int.MaxValue, ErrorMessage = "Capacity must be at least 1.")]
-        public int Capacity { get; set; }
+        public int TotalCapacity { get; set; }
+        
+        [Required(ErrorMessage = "Current Capacity is required.")]
+        [Range(0, int.MaxValue, ErrorMessage = "Current Capacity cannot be negative.")]
+        public int CurrentCapacity { get; set; }  // New field
+        
 
         // Availability status (True = Available, False = Occupied)
         [Required(ErrorMessage = "Availability status is required.")]

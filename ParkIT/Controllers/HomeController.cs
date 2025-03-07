@@ -23,6 +23,7 @@ namespace ParkIT.Controllers
         [HttpGet("parking-spaces")]
         public async Task<IActionResult> GetParkingSpaces([FromQuery] bool onlyAvailable = false)
         {
+            _dbContext.ChangeTracker.Clear();  // ✅ Correct place to use it
             var query = _dbContext.ParkingSpots.AsQueryable();
 
             if (onlyAvailable)
@@ -39,7 +40,8 @@ namespace ParkIT.Controllers
                     p.PlaceId,
                     p.PricePerHour,
                     p.Type,
-                    p.Capacity,
+                    TotalCapacity = (int)p.TotalCapacity,  // Updated field
+                    CurrentCapacity = (int)p.CurrentCapacity, // New field
                     p.Availability,
                     Latitude = p.GeoLocation != null ? p.GeoLocation.Y : 0,
                     Longitude = p.GeoLocation != null ? p.GeoLocation.X : 0
@@ -63,7 +65,8 @@ namespace ParkIT.Controllers
                     p.PlaceId,
                     p.PricePerHour,
                     p.Type,
-                    p.Capacity,
+                    TotalCapacity = (int)p.TotalCapacity,  // Updated field
+                    CurrentCapacity = (int)p.CurrentCapacity, // New field
                     p.Availability,
                     Latitude = p.GeoLocation != null ? p.GeoLocation.Y : 0,
                     Longitude = p.GeoLocation != null ? p.GeoLocation.X : 0
@@ -86,6 +89,14 @@ namespace ParkIT.Controllers
             {
                 return BadRequest(ModelState);
             }
+            
+            // ✅ Validate Total and Current Capacity
+            if (parkingSpace.TotalCapacity < 1)
+                return BadRequest(new { message = "Total Capacity must be at least 1." });
+
+            if (parkingSpace.CurrentCapacity < 0 || parkingSpace.CurrentCapacity > parkingSpace.TotalCapacity)
+                return BadRequest(new { message = "Current Capacity cannot be negative or exceed Total Capacity." });
+
 
             // ✅ Ensure valid geo-coordinates
             if (parkingSpace.GeoLocation == null || double.IsNaN(parkingSpace.GeoLocation.X) || double.IsNaN(parkingSpace.GeoLocation.Y))

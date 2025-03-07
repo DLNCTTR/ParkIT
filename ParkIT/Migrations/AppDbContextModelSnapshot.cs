@@ -38,7 +38,7 @@ namespace ParkIT.Migrations
                     b.Property<bool>("Availability")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Capacity")
+                    b.Property<int>("CurrentCapacity")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -63,6 +63,9 @@ namespace ParkIT.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("TotalCapacity")
+                        .HasColumnType("int");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -75,7 +78,7 @@ namespace ParkIT.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ParkingSpots", (string)null);
+                    b.ToTable("ParkingSpots");
                 });
 
             modelBuilder.Entity("ParkIT.Models.User", b =>
@@ -114,7 +117,7 @@ namespace ParkIT.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ParkIT.Models.ParkingSpot", b =>

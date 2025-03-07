@@ -39,7 +39,8 @@ namespace ParkIT.Controllers
                     PlaceId = p.PlaceId,
                     PricePerHour = p.PricePerHour,
                     Type = p.Type,
-                    Capacity = p.Capacity,
+                    TotalCapacity = p.TotalCapacity,  // Updated field
+                    CurrentCapacity = p.CurrentCapacity, // New field
                     Availability = p.Availability,
                     Latitude = p.GeoLocation.Y,
                     Longitude = p.GeoLocation.X
@@ -54,7 +55,7 @@ namespace ParkIT.Controllers
         public async Task<ActionResult<IEnumerable<ParkingSpotDto>>> GetNearbyParkingSpots(
             [FromQuery] double latitude, 
             [FromQuery] double longitude, 
-            [FromQuery] double maxDistanceKm = 5)
+            [FromQuery] double maxDistanceKm = 10)
         {
             var userLocation = new Point(longitude, latitude) { SRID = 4326 };
 
@@ -70,7 +71,8 @@ namespace ParkIT.Controllers
                     PlaceId = p.PlaceId,
                     PricePerHour = p.PricePerHour,
                     Type = p.Type,
-                    Capacity = p.Capacity,
+                    TotalCapacity = p.TotalCapacity,  // Updated field
+                    CurrentCapacity = p.CurrentCapacity, // New field
                     Availability = p.Availability,
                     Latitude = p.GeoLocation.Y,
                     Longitude = p.GeoLocation.X
@@ -100,7 +102,8 @@ namespace ParkIT.Controllers
                     PlaceId = p.PlaceId,
                     PricePerHour = p.PricePerHour,
                     Type = p.Type,
-                    Capacity = p.Capacity,
+                    TotalCapacity = p.TotalCapacity,  // Updated field
+                    CurrentCapacity = p.CurrentCapacity, // New field
                     Availability = p.Availability,
                     Latitude = p.GeoLocation.Y,
                     Longitude = p.GeoLocation.X
@@ -125,7 +128,8 @@ namespace ParkIT.Controllers
                     PlaceId = p.PlaceId,
                     PricePerHour = p.PricePerHour,
                     Type = p.Type,
-                    Capacity = p.Capacity,
+                    TotalCapacity = p.TotalCapacity,  // Updated field
+                    CurrentCapacity = p.CurrentCapacity, // New field
                     Availability = p.Availability,
                     Latitude = p.GeoLocation.Y,
                     Longitude = p.GeoLocation.X
@@ -149,6 +153,13 @@ namespace ParkIT.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("User ID not found.");
+            
+            // ✅ Validate Total and Current Capacity
+            if (newSpot.TotalCapacity < 1)
+                return BadRequest("Total Capacity must be at least 1.");
+    
+            if (newSpot.CurrentCapacity < 0 || newSpot.CurrentCapacity > newSpot.TotalCapacity)
+                return BadRequest("Current Capacity cannot be negative or exceed Total Capacity.");
 
             var parkingSpot = new ParkingSpot
             {
@@ -158,7 +169,8 @@ namespace ParkIT.Controllers
                 PlaceId = newSpot.PlaceId,
                 PricePerHour = newSpot.PricePerHour,
                 Type = newSpot.Type,
-                Capacity = newSpot.Capacity,
+                TotalCapacity = newSpot.TotalCapacity,  // Updated field
+                CurrentCapacity = newSpot.CurrentCapacity,
                 Availability = newSpot.Availability,
                 GeoLocation = new Point(newSpot.Longitude, newSpot.Latitude) { SRID = 4326 }
             };
@@ -183,11 +195,19 @@ namespace ParkIT.Controllers
 
             if (spot.UserId != int.Parse(userId) && !isAdmin)
                 return Forbid();
+            
+            // ✅ Validate Total and Current Capacity
+            if (updatedSpot.TotalCapacity < 1)
+                return BadRequest("Total Capacity must be at least 1.");
+    
+            if (updatedSpot.CurrentCapacity < 0 || updatedSpot.CurrentCapacity > updatedSpot.TotalCapacity)
+                return BadRequest("Current Capacity cannot be negative or exceed Total Capacity.");
 
             spot.Address = updatedSpot.Address;
             spot.PricePerHour = updatedSpot.PricePerHour;
             spot.Type = updatedSpot.Type;
-            spot.Capacity = updatedSpot.Capacity;
+            spot.TotalCapacity = updatedSpot.TotalCapacity;  // Updated field
+            spot.CurrentCapacity = updatedSpot.CurrentCapacity; // Updated field
             spot.Availability = updatedSpot.Availability;
             spot.GeoLocation = new Point(updatedSpot.Longitude, updatedSpot.Latitude) { SRID = 4326 };
 

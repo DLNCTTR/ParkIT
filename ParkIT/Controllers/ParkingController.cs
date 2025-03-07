@@ -61,7 +61,8 @@ namespace ParkIT.Controllers
                     PlaceId = p.PlaceId ?? "Unknown",
                     PricePerHour = p.PricePerHour,
                     Type = p.Type,
-                    Capacity = p.Capacity,
+                    CurrentCapacity = p.CurrentCapacity,
+                    TotalCapacity = p.TotalCapacity,  // Updated field
                     Availability = p.Availability,
                     Latitude = p.GeoLocation != null ? p.GeoLocation.Y : 0,
                     Longitude = p.GeoLocation != null ? p.GeoLocation.X : 0,
@@ -107,12 +108,18 @@ namespace ParkIT.Controllers
                     return BadRequest(new { message = "Invalid price per hour. Must be between 0 and 1000." });
                 }
 
-                if (parkingSpotDto.Capacity < 1)
+                if (parkingSpotDto.TotalCapacity < 1)
                 {
-                    Console.WriteLine("❌ Invalid Capacity.");
-                    return BadRequest(new { message = "Capacity must be at least 1." });
+                    Console.WriteLine("❌ Invalid Total Capacity.");
+                    return BadRequest(new { message = "Total Capacity must be at least 1." });
                 }
 
+                if (parkingSpotDto.CurrentCapacity < 0 || parkingSpotDto.CurrentCapacity > parkingSpotDto.TotalCapacity)
+                {
+                    Console.WriteLine("❌ Invalid Current Capacity.");
+                    return BadRequest(new { message = "Current Capacity cannot be negative or exceed Total Capacity." });
+                }
+                
                 if (!IsValidNumber(parkingSpotDto.Latitude) || !IsValidNumber(parkingSpotDto.Longitude))
                 {
                     Console.WriteLine("❌ Invalid GPS Coordinates.");
@@ -129,7 +136,8 @@ namespace ParkIT.Controllers
                     PlaceId = parkingSpotDto.PlaceId ?? "Unknown",
                     PricePerHour = Math.Round(parkingSpotDto.PricePerHour, 2),
                     Type = parkingSpotDto.Type ?? "Unknown",
-                    Capacity = parkingSpotDto.Capacity,
+                    TotalCapacity = parkingSpotDto.TotalCapacity,  // Updated field
+                    CurrentCapacity = parkingSpotDto.CurrentCapacity,
                     Availability = parkingSpotDto.Availability,
                     GeoLocation = geometryFactory.CreatePoint(new Coordinate(parkingSpotDto.Longitude, parkingSpotDto.Latitude)),
                     Description = parkingSpotDto.Description ?? "No description provided."
