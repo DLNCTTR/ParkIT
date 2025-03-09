@@ -63,6 +63,8 @@ const LoginPage = () => {
                 localStorage.setItem("user", JSON.stringify(data.user));
 
                 setMessage(`Welcome, ${data.user.username}!`);
+
+                window.location.reload(); // ✅ Refreshes the page after login
             } else {
                 setMessage("Account created successfully! Please sign in.");
             }

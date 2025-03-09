@@ -139,6 +139,9 @@ const MapPage = () => {
                     )}
                 </GoogleMap>
             </div>
+            <p style={{ marginTop: "20px", fontSize: "20px", fontWeight: "bold", color: "#333", textAlign: "center" }}>
+                Select a marker to get more details!
+            </p>
         </div>
     );
 

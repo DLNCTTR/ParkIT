@@ -132,12 +132,11 @@ const HomePage = () => {
                 <ul className="parking-list">
                     {filteredSpaces.map((space) => (
                         <li key={space.id} className="parking-card">
-                            <h2>{space.formattedAddress || "📍 Unknown Location"}</h2>
-                            <p><strong>📌 Place ID:</strong> {space.placeId || "N/A"}</p>
+                            <h2>{space.address || "📍 Unknown Location"}</h2>
                             <p><strong>💰 Price per Hour:</strong> €{space.pricePerHour.toFixed(2)}</p>
-                            <p><strong>🚗 Capacity:</strong> {space.capacity}</p>
                             <p><strong>🟢 Availability:</strong> {space.availability ? "Available" : "Not Available"}</p>
-                            <p><strong>📍 Coordinates:</strong> {space.latitude}, {space.longitude}</p>
+                            <p><strong>🚗 Current Capacity:</strong> {space.currentCapacity}</p>
+                            <p><strong>🏢 Total Capacity:</strong> {space.totalCapacity}</p>
                             <Link to={`/parking/${space.id}`} className="view-details-button">
                                 🔍 View Details
                             </Link>

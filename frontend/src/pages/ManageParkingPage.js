@@ -3,6 +3,7 @@ import axios from "axios";
 import { GoogleMap, Autocomplete, useLoadScript, MarkerF } from "@react-google-maps/api";
 import "../components/ManageParkingPage.css";
 
+
 const API_BASE_URL = "https://localhost:7155/api";
 const googleMapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const libraries = ["places"];
@@ -163,11 +164,13 @@ const ManageParkingPage = () => {
             totalCapacity: Math.max(1, parseInt(form.totalCapacity, 10)),  // ✅ Ensures at least 1
             currentCapacity: parseInt(form.currentCapacity, 10) || 0,  // ✅ Allows 0
             availability: form.availability === "true" || form.availability === true,
-            description: form.description !== "No Description Available" ? form.description : null,
+            description: String(form.description || ""),
             latitude: isFinite(form.latitude) ? form.latitude : 51.8985,
             longitude: isFinite(form.longitude) ? form.longitude : -8.4756,
             userId: parseInt(userId),
         };
+
+        console.log("Submitting Payload:", payload);
 
         try {
             if (isEditing) {
@@ -194,6 +197,8 @@ const ManageParkingPage = () => {
         setIsEditing(true);
         setEditingId(spot.id);
 
+        console.log("Editing Spot Data:", spot);
+
         setForm({
             address: spot.address || "",
             formattedAddress: spot.formattedAddress || "",
@@ -203,7 +208,7 @@ const ManageParkingPage = () => {
             totalcapacity: spot.capacity || 1,
             currentCapacity: spot.currentCapacity || 0,
             availability: spot.availability ?? true, // Preserve availability status
-            description: spot.description ?? "",
+            description: typeof spot.description === "string" ? spot.description : "",
             latitude: spot.latitude || defaultCenter.lat,
             longitude: spot.longitude || defaultCenter.lng,
         });
@@ -273,7 +278,7 @@ const ManageParkingPage = () => {
                 <input type="text" placeholder="Address" className="input-field" value={form.address}
                        onChange={(e) => setForm({...form, address: e.target.value})} required/>
 
-                <input type="number" placeholder="Price Per Hour" className="input-field" value={form.pricePerHour}
+                <input type="number" placeholder="€ Price Per Hour" className="input-field" value={form.pricePerHour}
                        onChange={(e) => setForm({...form, pricePerHour: e.target.value})} required/>
 
                 <input type="text" placeholder="Type (Garage, Street, etc.)" className="input-field" value={form.type}
@@ -306,6 +311,8 @@ const ManageParkingPage = () => {
                 <thead>
                 <tr>
                     <th>Address</th>
+                    <th>Type</th>
+                    <th>T.Capacity</th>
                     <th>Price</th>
                     <th>Actions</th>
                 </tr>
@@ -314,7 +321,9 @@ const ManageParkingPage = () => {
                 {parkingSpaces.map((spot) => (
                     <tr key={spot.id}>
                         <td>{spot.address}</td>
-                        <td>${spot.pricePerHour}</td>
+                        <td>{spot.type}</td>
+                        <td>{spot.totalCapacity}</td>
+                        <td>€{spot.pricePerHour}</td>
                         <td>
                             <button onClick={() => handleEdit(spot)}>✏️ Edit</button>
                             <button onClick={() => handleDelete(spot.id)}>❌ Delete</button>

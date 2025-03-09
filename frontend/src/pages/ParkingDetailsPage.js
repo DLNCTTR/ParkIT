@@ -98,10 +98,14 @@ const ParkingDetailsPage = () => {
     return (
         <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
             <h1>🚗 {parkingSpot.address}</h1>
-            <p><strong>Price per Hour:</strong> ${parkingSpot.pricePerHour}</p>
-            <p><strong>Type:</strong> {parkingSpot.type}</p>
-            <p><strong>Capacity:</strong> {parkingSpot.capacity}</p>
-            <p><strong>Available:</strong> {parkingSpot.availability ? "✅ Yes" : "❌ No"}</p>
+            <p><strong>💰 Price per Hour:</strong> €{parkingSpot.pricePerHour}</p>
+            <p><strong>📍 Coordinates:</strong> {parkingSpot.latitude}, {parkingSpot.longitude}</p>
+            <p><strong>🏢 Type:</strong> {parkingSpot.type}</p>
+            <p><strong>🚗 Current Capacity:</strong> {parkingSpot.currentCapacity}</p>
+            <p><strong>🏠 Total Capacity:</strong> {parkingSpot.totalCapacity}</p>
+            <p><strong>📝 Description:</strong> {parkingSpot.description || "No description available."}</p>
+            <p><strong>🟢 Available:</strong> {parkingSpot.availability ? "✅ Yes" : "❌ No"}</p>
+
 
             {/* Travel Mode Selector */}
             <div style={{ marginBottom: "15px" }}>
