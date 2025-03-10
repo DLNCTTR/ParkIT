@@ -42,6 +42,7 @@ namespace ParkIT.Controllers
                     TotalCapacity = p.TotalCapacity,  // Updated field
                     CurrentCapacity = p.CurrentCapacity, // New field
                     Availability = p.Availability,
+                    Description = p.Description ?? "",
                     Latitude = p.GeoLocation.Y,
                     Longitude = p.GeoLocation.X
                 })
@@ -74,6 +75,7 @@ namespace ParkIT.Controllers
                     TotalCapacity = p.TotalCapacity,  // Updated field
                     CurrentCapacity = p.CurrentCapacity, // New field
                     Availability = p.Availability,
+                    Description = p.Description ?? "",
                     Latitude = p.GeoLocation.Y,
                     Longitude = p.GeoLocation.X
                 })
@@ -105,6 +107,7 @@ namespace ParkIT.Controllers
                     TotalCapacity = p.TotalCapacity,  // Updated field
                     CurrentCapacity = p.CurrentCapacity, // New field
                     Availability = p.Availability,
+                    Description = p.Description ?? "",
                     Latitude = p.GeoLocation.Y,
                     Longitude = p.GeoLocation.X
                 })
@@ -131,6 +134,7 @@ namespace ParkIT.Controllers
                     TotalCapacity = p.TotalCapacity,  // Updated field
                     CurrentCapacity = p.CurrentCapacity, // New field
                     Availability = p.Availability,
+                    Description = p.Description ?? "",
                     Latitude = p.GeoLocation.Y,
                     Longitude = p.GeoLocation.X
                 })
@@ -172,6 +176,7 @@ namespace ParkIT.Controllers
                 TotalCapacity = newSpot.TotalCapacity,  // Updated field
                 CurrentCapacity = newSpot.CurrentCapacity,
                 Availability = newSpot.Availability,
+                Description = newSpot.Description ?? "",
                 GeoLocation = new Point(newSpot.Longitude, newSpot.Latitude) { SRID = 4326 }
             };
 
@@ -209,6 +214,7 @@ namespace ParkIT.Controllers
             spot.TotalCapacity = updatedSpot.TotalCapacity;  // Updated field
             spot.CurrentCapacity = updatedSpot.CurrentCapacity; // Updated field
             spot.Availability = updatedSpot.Availability;
+            spot.Description = updatedSpot.Description ?? "";
             spot.GeoLocation = new Point(updatedSpot.Longitude, updatedSpot.Latitude) { SRID = 4326 };
 
             _context.ParkingSpots.Update(spot);

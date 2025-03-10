@@ -17,7 +17,7 @@ const Navbar = () => {
             <ul className="navbar-list">
                 {/* Always show Home */}
                 <li className="navbar-item">
-                    <Link to="/" className="navbar-link">Home</Link>
+                    <Link to="/home" className="navbar-link">Home</Link>
                 </li>
                 {/* Always show Map */}
                 <li className="navbar-item">

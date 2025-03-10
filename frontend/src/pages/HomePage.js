@@ -102,52 +102,56 @@ const HomePage = () => {
     if (error) return <div className="error-message">{error}</div>;
 
     return (
-        <div className="homepage-container">
-            <h1 className="homepage-title">📍 Available Parking Spaces</h1>
+        <div className="content-wrapper"> {/* ✅ Wrap content */}
+            <div className="homepage-container">
+                <h1 className="homepage-title">📍 Available Parking Spaces</h1>
 
-            {/* 🔍 Search Input */}
-            <div className="search-container">
-                <input
-                    type="text"
-                    placeholder="🔍 Search by address, place ID, or type..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="search-input"
-                    disabled={filterByProximity} // Disable search when filtering by proximity
-                />
+                {/* 🔍 Search Input */}
+                <div className="search-container">
+                    <input
+                        type="text"
+                        placeholder="🔍 Search by address, place ID, or type..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="search-input"
+                        disabled={filterByProximity} // Disable search when filtering by proximity
+                    />
+                </div>
+
+                {/* 🌍 Toggle Proximity Filter */}
+                <div className="filter-container">
+                    <button
+                        className="filter-button"
+                        onClick={filterByProximity ? () => setFilterByProximity(false) : getUserLocation}
+                    >
+                        {filterByProximity ? "🔄 Reset Filter" : "📍 Find Nearby Parking"}
+                    </button>
+                </div>
+
+                {/* 🚗 Parking Spaces List */}
+                {filteredSpaces.length > 0 ? (
+                    <ul className="parking-list">
+                        {filteredSpaces.map((space) => (
+                            <li key={space.id} className="parking-card">
+                                <h2>{space.address || "📍 Unknown Location"}</h2>
+                                <p><strong>💰 Price per Hour:</strong> €{space.pricePerHour.toFixed(2)}</p>
+                                <p><strong>🟢 Availability:</strong> {space.availability ? "Available" : "Not Available"}
+                                </p>
+                                <p><strong>🚗 Current Capacity:</strong> {space.currentCapacity}</p>
+                                <p><strong>🏢 Total Capacity:</strong> {space.totalCapacity}</p>
+                                <Link to={`/parking/${space.id}`} className="view-details-button">
+                                    🔍 View Details
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="no-results-message">❌ No parking spaces match your search.</p>
+                )}
             </div>
-
-            {/* 🌍 Toggle Proximity Filter */}
-            <div className="filter-container">
-                <button
-                    className="filter-button"
-                    onClick={filterByProximity ? () => setFilterByProximity(false) : getUserLocation}
-                >
-                    {filterByProximity ? "🔄 Reset Filter" : "📍 Find Nearby Parking"}
-                </button>
-            </div>
-
-            {/* 🚗 Parking Spaces List */}
-            {filteredSpaces.length > 0 ? (
-                <ul className="parking-list">
-                    {filteredSpaces.map((space) => (
-                        <li key={space.id} className="parking-card">
-                            <h2>{space.address || "📍 Unknown Location"}</h2>
-                            <p><strong>💰 Price per Hour:</strong> €{space.pricePerHour.toFixed(2)}</p>
-                            <p><strong>🟢 Availability:</strong> {space.availability ? "Available" : "Not Available"}</p>
-                            <p><strong>🚗 Current Capacity:</strong> {space.currentCapacity}</p>
-                            <p><strong>🏢 Total Capacity:</strong> {space.totalCapacity}</p>
-                            <Link to={`/parking/${space.id}`} className="view-details-button">
-                                🔍 View Details
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p className="no-results-message">❌ No parking spaces match your search.</p>
-            )}
         </div>
     );
 };
+            
 
-export default HomePage;
+            export default HomePage;

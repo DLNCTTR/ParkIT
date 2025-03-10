@@ -5,6 +5,24 @@
     display: flex;
     justify-content: center;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 50px; /* Explicitly set navbar height */
+    line-height: 50px; /* Ensures text alignment */
+}
+
+/* Prevent page content from being covered by the fixed navbar */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Wrapper to ensure content is not hidden under the navbar */
+.content-wrapper {
+    padding-top: 70px; /* Matches navbar height + extra space */
 }
 
 /* ================== Navbar List ================== */

@@ -104,47 +104,54 @@ const MapPage = () => {
     console.log("🟢 Ready to Render Markers:", parkingSpots);
 
     return (
-        <div className="map-container">
-            <h1 className="map-title">🗺️ Available Parking Spots</h1>
+        <div className="content-wrapper"> {/* ✅ Prevents navbar overlap */}
+            <div className="map-container">
+                <h1 className="map-title">🗺️ Available Parking Spots</h1>
 
-            {/* ✅ Search Bar */}
-            <div className="search-container">
-                <Autocomplete onLoad={(box) => setSearchBox(box)} onPlaceChanged={handlePlaceSelect}>
-                    <input type="text" placeholder="🔍 Search Location" className="search-input" />
-                </Autocomplete>
-            </div>
+                {/* ✅ Search Bar */}
+                <div className="search-container">
+                    <Autocomplete onLoad={(box) => setSearchBox(box)} onPlaceChanged={handlePlaceSelect}>
+                        <input type="text" placeholder="🔍 Search Location" className="search-input"/>
+                    </Autocomplete>
+                </div>
 
-            {/* ✅ Google Map with Proper Framing */}
-            <div className="map-frame">
-                <GoogleMap
-                    mapContainerStyle={mapContainerStyle}
-                    center={mapCenter}
-                    zoom={zoomLevel}
-                >
-                    {/* ✅ Ensure markers appear after the map is loaded */}
-                    {markersLoaded && parkingSpots.length > 0 ? (
-                        parkingSpots.map((spot) => {
-                            console.log("📍 Rendering Marker:", spot);
-                            return (
-                                <Marker
-                                    key={spot.id}
-                                    position={{ lat: parseFloat(spot.lat), lng: parseFloat(spot.lng) }}
-                                    title={spot.address}
-                                    onClick={() => handleMarkerClick(spot.id)}
-                                />
-                            );
-                        })
-                    ) : (
-                        console.log("⚠️ Markers Not Ready or Empty", parkingSpots)
-                    )}
-                </GoogleMap>
+                {/* ✅ Google Map with Proper Framing */}
+                <div className="map-frame">
+                    <GoogleMap
+                        mapContainerStyle={mapContainerStyle}
+                        center={mapCenter}
+                        zoom={zoomLevel}
+                    >
+                        {/* ✅ Ensure markers appear after the map is loaded */}
+                        {markersLoaded && parkingSpots.length > 0 ? (
+                            parkingSpots.map((spot) => {
+                                console.log("📍 Rendering Marker:", spot);
+                                return (
+                                    <Marker
+                                        key={spot.id}
+                                        position={{lat: parseFloat(spot.lat), lng: parseFloat(spot.lng)}}
+                                        title={spot.address}
+                                        onClick={() => handleMarkerClick(spot.id)}
+                                    />
+                                );
+                            })
+                        ) : (
+                            console.log("⚠️ Markers Not Ready or Empty", parkingSpots)
+                        )}
+                    </GoogleMap>
+                </div>
+                <p style={{
+                    marginTop: "20px",
+                    fontSize: "20px",
+                    fontWeight: "bold",
+                    color: "#333",
+                    textAlign: "center"
+                }}>
+                    Select a marker to get more details!
+                </p>
             </div>
-            <p style={{ marginTop: "20px", fontSize: "20px", fontWeight: "bold", color: "#333", textAlign: "center" }}>
-                Select a marker to get more details!
-            </p>
         </div>
     );
-
 };
 
-export default MapPage;
+            export default MapPage;

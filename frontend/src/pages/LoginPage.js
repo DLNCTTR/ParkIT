@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ Import for navigation
 import "../components/LoginPage.css";
 
 const LoginPage = () => {
+    const navigate = useNavigate(); // ✅ Initialize navigate function
+
     const [isSignIn, setIsSignIn] = useState(true);
     const [formData, setFormData] = useState({
         username: "",
@@ -58,13 +61,20 @@ const LoginPage = () => {
                 if (!data.user || !data.user.username || !data.user.id) {
                     throw new Error("Login successful, but no user data received.");
                 }
+
+                // ✅ Store user details in local storage
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("userId", data.user.id);
                 localStorage.setItem("user", JSON.stringify(data.user));
 
                 setMessage(`Welcome, ${data.user.username}!`);
 
-                window.location.reload(); // ✅ Refreshes the page after login
+                // ✅ Redirect to homepage and refresh
+                navigate("/home", { replace: true });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
             } else {
                 setMessage("Account created successfully! Please sign in.");
             }
@@ -78,6 +88,7 @@ const LoginPage = () => {
     };
 
     return (
+        <div className="content-wrapper"> {/* ✅ Prevents navbar overlap */}
         <div className="login-container">
             <h1 className="login-title">{isSignIn ? "Sign In" : "Create Account"}</h1>
             <form onSubmit={handleSubmit} className="login-form">
@@ -125,6 +136,7 @@ const LoginPage = () => {
                 {isSignIn ? "Switch to Create Account" : "Switch to Sign In"}
             </button>
             {message && <p className={`message ${isSuccess ? "success-message" : "error-message"}`}>{message}</p>}
+        </div>
         </div>
     );
 };

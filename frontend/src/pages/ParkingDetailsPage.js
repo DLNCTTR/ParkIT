@@ -96,6 +96,7 @@ const ParkingDetailsPage = () => {
     if (!parkingSpot) return <div style={{ textAlign: "center", padding: "20px" }}>❌ Parking spot not found.</div>;
 
     return (
+        <div className="content-wrapper"> {/* ✅ Prevents navbar overlap */}
         <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
             <h1>🚗 {parkingSpot.address}</h1>
             <p><strong>💰 Price per Hour:</strong> €{parkingSpot.pricePerHour}</p>
@@ -175,6 +176,7 @@ const ParkingDetailsPage = () => {
             >
                 📍 Open in Google Maps
             </button>
+        </div>
         </div>
     );
 };

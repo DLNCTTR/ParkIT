@@ -32,11 +32,10 @@ const ManageParkingPage = () => {
         address: "",
         formattedAddress: "",
         placeId: "",
-        pricePerHour: 0,
+        pricePerHour: "",
         type: "",
-        capacity: 1,
-        totalCapacity: 1,  // ✅ Renamed from "capacity"
-        currentCapacity: 0,
+        totalCapacity: "",  // ✅ Renamed from "capacity"
+        currentCapacity: "",
         availability: true,
         description: "",
         latitude: defaultCenter.lat,
@@ -89,7 +88,18 @@ const ManageParkingPage = () => {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            setParkingSpaces(Array.isArray(response.data) ? response.data : []);
+            console.log("🚀 API Response:", response.data); // Debugging
+
+            const spaces = Array.isArray(response.data) ? response.data : [];
+
+            // ✅ Ensure each spot has totalCapacity and description correctly assigned
+            const updatedSpaces = spaces.map(spot => ({
+                ...spot,
+                totalCapacity: spot.totalCapacity || 1,  // ✅ Ensure totalCapacity is always available
+                description: spot.description ? String(spot.description) : "",  // ✅ Ensure description is a string
+            }));
+
+            setParkingSpaces(updatedSpaces);
         } catch (error) {
             setError("❌ Failed to fetch parking spaces.");
         }
@@ -205,10 +215,10 @@ const ManageParkingPage = () => {
             placeId: spot.placeId || "",
             pricePerHour: spot.pricePerHour || 0,
             type: spot.type || "",
-            totalcapacity: spot.capacity || 1,
+            totalcapacity: spot.totalCapacity || 1,
             currentCapacity: spot.currentCapacity || 0,
             availability: spot.availability ?? true, // Preserve availability status
-            description: typeof spot.description === "string" ? spot.description : "",
+            description: spot.description ? String(spot.description) : "",
             latitude: spot.latitude || defaultCenter.lat,
             longitude: spot.longitude || defaultCenter.lng,
         });
@@ -236,104 +246,109 @@ const ManageParkingPage = () => {
     };
 
     return (
-        <div className="manage-container">
-            <h1 className="manage-title">🚗 Manage Your Parking Spaces</h1>
+        <div className="content-wrapper"> {/* ✅ Prevents navbar overlap */}
+            <div className="manage-container">
+                <h1 className="manage-title">🚗 Manage Your Parking Spaces</h1>
 
-            {error && <div className="error-message">{error}</div>}
+                {error && <div className="error-message">{error}</div>}
 
-            {isLoaded ? (
-                <div> {/* ✅ Ensure the container div is correctly opened and closed */}
-                    {/* ✅ Styled Search Input */}
-                    <div className="search-container">
-                        <Autocomplete onLoad={(auto) => setAutocomplete(auto)} onPlaceChanged={handlePlaceSelect}>
-                            <input type="text" placeholder="🔍 Search Location" className="search-input"/>
-                        </Autocomplete>
-                    </div>
+                {isLoaded ? (
+                    <div> {/* ✅ Ensure the container div is correctly opened and closed */}
+                        {/* ✅ Styled Search Input */}
+                        <div className="search-container">
+                            <Autocomplete onLoad={(auto) => setAutocomplete(auto)} onPlaceChanged={handlePlaceSelect}>
+                                <input type="text" placeholder="🔍 Search Location" className="search-input"/>
+                            </Autocomplete>
+                        </div>
 
-                    {/* ✅ Google Map with Black Border */}
-                    <div className="map-container">
-                        <GoogleMap
-                            className="map-frame"
-                            mapContainerStyle={mapContainerStyle}
-                            center={{ lat: form.latitude, lng: form.longitude }}
-                            zoom={14}
-                            onClick={handleMapClick}
-                        >
-                            <MarkerF
-                                position={{lat: form.latitude, lng: form.longitude}}
-                                draggable={true}
-                                onDragEnd={handleMarkerDragEnd}
-                            />
-                        </GoogleMap>
-                    </div>
-                </div> /* ✅ Ensure this div is properly closed */
-            ) : (
-                <p>Loading map...</p>
-            )}
-
-
-            <form className="manage-form" onSubmit={handleFormSubmit}>
-                <h3>{isEditing ? "✏️ Edit Parking Spot" : "➕ Add Parking Spot"}</h3>
-
-                <input type="text" placeholder="Address" className="input-field" value={form.address}
-                       onChange={(e) => setForm({...form, address: e.target.value})} required/>
-
-                <input type="number" placeholder="€ Price Per Hour" className="input-field" value={form.pricePerHour}
-                       onChange={(e) => setForm({...form, pricePerHour: e.target.value})} required/>
-
-                <input type="text" placeholder="Type (Garage, Street, etc.)" className="input-field" value={form.type}
-                       onChange={(e) => setForm({...form, type: e.target.value})} required/>
-
-                <input type="number" placeholder="Total Capacity" className="input-field" value={form.totalCapacity}
-                       onChange={(e) => setForm({...form, totalCapacity: e.target.value})} min="1" required/>
-
-                <input type="number" placeholder="Current Capacity" className="input-field" value={form.currentCapacity}
-                       onChange={handleCurrentCapacityChange} min="0" required/>
+                        {/* ✅ Google Map with Black Border */}
+                        <div className="map-container">
+                            <GoogleMap
+                                className="map-frame"
+                                mapContainerStyle={mapContainerStyle}
+                                center={{lat: form.latitude, lng: form.longitude}}
+                                zoom={14}
+                                onClick={handleMapClick}
+                            >
+                                <MarkerF
+                                    position={{lat: form.latitude, lng: form.longitude}}
+                                    draggable={true}
+                                    onDragEnd={handleMarkerDragEnd}
+                                />
+                            </GoogleMap>
+                        </div>
+                    </div> /* ✅ Ensure this div is properly closed */
+                ) : (
+                    <p>Loading map...</p>
+                )}
 
 
-                <select className="input-field" value={form.availability}
-                        onChange={(e) => setForm({...form, availability: e.target.value})} required>
-                    <option value="true">Available</option>
-                    <option value="false">Unavailable</option>
-                </select>
+                <form className="manage-form" onSubmit={handleFormSubmit}>
+                    <h3>{isEditing ? "✏️ Edit Parking Spot" : "➕ Add Parking Spot"}</h3>
 
-                <textarea placeholder="Description (Optional)" className="input-field" value={form.description}
-                          onChange={(e) => setForm({...form, description: e.target.value})}></textarea>
+                    <input type="text" placeholder="Address" className="input-field" value={form.address}
+                           onChange={(e) => setForm({...form, address: e.target.value})} required/>
 
-                <button type="submit" className="btn-primary">
-                    {isEditing ? "Update" : "Add"} Parking Spot
-                </button>
-            </form>
+                    <input type="number" placeholder="€ Price Per Hour" className="input-field"
+                           value={form.pricePerHour}
+                           onChange={(e) => setForm({...form, pricePerHour: e.target.value})} required/>
 
-            {/* ✅ New Parking Spots List Section */}
-            <h3>📍 Your Parking Spots</h3>
-            <table border="1" style={{width: "100%", marginTop: "10px"}}>
-                <thead>
-                <tr>
-                    <th>Address</th>
-                    <th>Type</th>
-                    <th>T.Capacity</th>
-                    <th>Price</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {parkingSpaces.map((spot) => (
-                    <tr key={spot.id}>
-                        <td>{spot.address}</td>
-                        <td>{spot.type}</td>
-                        <td>{spot.totalCapacity}</td>
-                        <td>€{spot.pricePerHour}</td>
-                        <td>
-                            <button onClick={() => handleEdit(spot)}>✏️ Edit</button>
-                            <button onClick={() => handleDelete(spot.id)}>❌ Delete</button>
-                        </td>
+                    <input type="text" placeholder="Type (Garage, Street, etc.)" className="input-field"
+                           value={form.type}
+                           onChange={(e) => setForm({...form, type: e.target.value})} required/>
+
+                    <input type="number" placeholder="Total Capacity" className="input-field" value={form.totalCapacity}
+                           onChange={(e) => setForm({...form, totalCapacity: e.target.value})} min="1" required/>
+
+                    <input type="number" placeholder="Current Capacity" className="input-field"
+                           value={form.currentCapacity}
+                           onChange={handleCurrentCapacityChange} min="0" required/>
+
+
+                    <select className="input-field" value={form.availability}
+                            onChange={(e) => setForm({...form, availability: e.target.value})} required>
+                        <option value="true">Available</option>
+                        <option value="false">Unavailable</option>
+                    </select>
+
+                    <textarea placeholder="Description (Optional)" className="input-field" value={form.description}
+                              onChange={(e) => setForm({...form, description: e.target.value})}></textarea>
+
+                    <button type="submit" className="btn-primary">
+                        {isEditing ? "Update" : "Add"} Parking Spot
+                    </button>
+                </form>
+
+                {/* ✅ New Parking Spots List Section */}
+                <h3>📍 Your Parking Spots</h3>
+                <table border="1" style={{width: "100%", marginTop: "10px"}}>
+                    <thead>
+                    <tr>
+                        <th>Address</th>
+                        <th>Type</th>
+                        <th>T.Capacity</th>
+                        <th>Price</th>
+                        <th>Actions</th>
                     </tr>
-                ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {parkingSpaces.map((spot) => (
+                        <tr key={spot.id}>
+                            <td>{spot.address}</td>
+                            <td>{spot.type}</td>
+                            <td>{spot.totalCapacity}</td>
+                            <td>€{spot.pricePerHour}</td>
+                            <td>
+                                <button onClick={() => handleEdit(spot)}>✏️ Edit</button>
+                                <button onClick={() => handleDelete(spot.id)}>❌ Delete</button>
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };
 
-export default ManageParkingPage;
+            export default ManageParkingPage;
