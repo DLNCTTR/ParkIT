@@ -1,9 +1,8 @@
-/* ================== Manage Page Background ================== */
+/* ================== General Page Styling ================== */
 body {
     background-color: #E0E0E0; /* ✅ Light Grey Background */
     margin: 0;
     padding: 0;
-    gap: 15px;
 }
 
 /* ================== Title ================== */
@@ -15,15 +14,20 @@ body {
 }
 
 /* ================== Search Input ================== */
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
 .search-input {
     padding: 10px;
     width: 100%;
-    max-width: 400px; /* ✅ Prevents stretching */
+    max-width: 400px;
     border: 1px solid #9E9E9E;
     border-radius: 5px;
     background-color: #FFFFFF;
     color: #4A4A4A;
-    margin-bottom: 10px;
 }
 
 .search-input::placeholder {
@@ -32,52 +36,66 @@ body {
 
 .search-input:focus {
     border-color: #D72638;
+    outline: none;
 }
 
 /* ================== Map Styling ================== */
-.map-frame {
-    border: 2px solid #000000; /* ✅ Black Border */
+.manage-map-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black; /* ✅ Creates the black frame effect */
+    padding: 5px; /* ✅ Space between map and frame */
     border-radius: 10px;
-    overflow: hidden;
     max-width: 900px;
-    margin: 0 auto 10px auto; /* ✅ Less space below */
-    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    margin: 0 auto 5px auto; /* ✅ Reduced space below the map */
 }
 
-/* ================== Form ================== */
+.manage-map-frame {
+    border: 1px solid black;
+    width: 100%;
+    max-width: 880px;
+    height: 400px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ================== Form Styling ================== */
 .manage-form {
     display: flex;
     flex-direction: column;
     background: #FFFFFF;
-    padding: 5px;
+    padding: 10px;
     border: 1px solid #000000;
     border-radius: 5px;
     box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
     max-width: 800px;
-    margin: 2px auto; /* ✅ Reduce space between form and map */
-}  
+    margin: 5px auto; /* ✅ Reduced space between form and map */
+}
 
 /* ================== Input Fields ================== */
 .input-field {
     padding: 10px;
     width: 100%;
-    max-width: 95%; /* ✅ Keep fields slightly smaller */
+    max-width: 95%;
     border: 1px solid #9E9E9E;
     border-radius: 5px;
     background-color: #FFFFFF;
     color: #4A4A4A;
-    margin-bottom: 8px; /* ✅ Less spacing between inputs */
+    margin-bottom: 8px;
 }
 
 .input-field:focus {
     border-color: #D72638;
+    outline: none;
 }
 
 /* ================== Buttons ================== */
 .btn-primary {
     background-color: #D72638;
     color: white;
-    padding: 10px;
+    padding: 12px;
     border: none;
     border-radius: 5px;
     font-size: 16px;
@@ -94,28 +112,18 @@ body {
     color: #B71C1C;
     text-align: center;
     font-weight: bold;
-}
-/* ================== Adjust the Space Between Map and Form ================== */
-.map-frame {
-    border: 2px solid #000000; /* ✅ Ensure the map has a frame */
-    border-radius: 8px;
-    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-    margin-bottom: 10px; /* ✅ Small but consistent space */
-}
-
-/* ================== Reduce Space Between Map & Form ================== */
-.manage-form {
-    margin-top: 5px !important;  /* ✅ Reduce top margin of form */
+    margin-bottom: 10px;
 }
 
 /* ================== Responsive Fixes ================== */
 @media (max-width: 768px) {
-    .map-frame {
-        max-width: 100%; /* ✅ Ensures responsiveness */
+    .map-container {
+        max-width: 100%;
     }
 
     .manage-form {
         max-width: 95%;
+        padding: 8px;
     }
 
     .input-field {

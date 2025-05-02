@@ -3,15 +3,16 @@
     background-color: #252525; /* Charcoal Black */
     padding: 10px 20px;
     display: flex;
-    justify-content: center;
+    align-items: center;
+    justify-content: center; /* ✅ Centers navigation links */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 
     position: fixed;
     top: 0;
     width: 100%;
     z-index: 1000;
-    height: 50px; /* Explicitly set navbar height */
-    line-height: 50px; /* Ensures text alignment */
+    height: 60px; /* Slightly increased height */
+    line-height: 60px; /* Ensures text alignment */
 }
 
 /* Prevent page content from being covered by the fixed navbar */
@@ -22,15 +23,28 @@ body {
 
 /* Wrapper to ensure content is not hidden under the navbar */
 .content-wrapper {
-    padding-top: 70px; /* Matches navbar height + extra space */
+    padding-top: 80px; /* Matches navbar height + extra space */
+}
+
+/* ================== Logo Styling ================== */
+.navbar-logo {
+    height: 78px; /* ✅ Keep the logo at the height you set */
+    width: auto;
+    position: absolute; /* ✅ Keeps the logo fixed to the left */
+    left: 15px; /* ✅ Keeps it from touching the edge */
+    top: 50%; /* ✅ Aligns it vertically */
+    transform: translateY(-50%); /* ✅ Ensures proper centering */
 }
 
 /* ================== Navbar List ================== */
 .navbar-list {
     list-style: none;
     display: flex;
+    align-items: center;
+    justify-content: center; /* ✅ Centers the navigation links */
     margin: 0;
     padding: 0;
+    width: 100%; /* ✅ Ensures it stretches across the navbar */
 }
 
 /* ================== Navbar Items ================== */
@@ -76,12 +90,19 @@ body {
 /* ================== Responsive Design ================== */
 @media (max-width: 768px) {
     .navbar {
-        padding: 10px;
+        flex-direction: column;
+        height: auto;
+    }
+
+    .navbar-logo {
+        height: 60px; /* ✅ Smaller logo for mobile */
+        left: 10px;
     }
 
     .navbar-list {
         flex-direction: column;
         text-align: center;
+        padding: 10px 0;
     }
 
     .navbar-item {

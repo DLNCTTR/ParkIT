@@ -215,7 +215,7 @@ const ManageParkingPage = () => {
             placeId: spot.placeId || "",
             pricePerHour: spot.pricePerHour || 0,
             type: spot.type || "",
-            totalcapacity: spot.totalCapacity || 1,
+            totalCapacity: spot.totalCapacity || 1,
             currentCapacity: spot.currentCapacity || 0,
             availability: spot.availability ?? true, // Preserve availability status
             description: spot.description ? String(spot.description) : "",
@@ -262,9 +262,10 @@ const ManageParkingPage = () => {
                         </div>
 
                         {/* ✅ Google Map with Black Border */}
-                        <div className="map-container">
+                        <div className="manage-map-container" style={{marginBottom: "20px"}}>
+
                             <GoogleMap
-                                className="map-frame"
+                                className="manage-map-frame"
                                 mapContainerStyle={mapContainerStyle}
                                 center={{lat: form.latitude, lng: form.longitude}}
                                 zoom={14}
@@ -283,7 +284,8 @@ const ManageParkingPage = () => {
                 )}
 
 
-                <form className="manage-form" onSubmit={handleFormSubmit}>
+                <form className="manage-form" onSubmit={handleFormSubmit} style={{marginTop: "5px"}}>
+
                     <h3>{isEditing ? "✏️ Edit Parking Spot" : "➕ Add Parking Spot"}</h3>
 
                     <input type="text" placeholder="Address" className="input-field" value={form.address}
@@ -351,4 +353,4 @@ const ManageParkingPage = () => {
     );
 };
 
-            export default ManageParkingPage;
+export default ManageParkingPage;

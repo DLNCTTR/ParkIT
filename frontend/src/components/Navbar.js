@@ -1,6 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
+import logo from "../assets/images/logo.png";
+
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -14,6 +16,11 @@ const Navbar = () => {
 
     return (
         <nav className="navbar">
+
+            <Link to="/">
+                <img src={logo} alt="ParkIT Logo" className="navbar-logo" />
+            </Link>
+            
             <ul className="navbar-list">
                 {/* Always show Home */}
                 <li className="navbar-item">
